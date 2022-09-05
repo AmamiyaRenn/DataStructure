@@ -80,11 +80,11 @@ void FirstAndSecondMaximum(int a[], int n)
 int main()
 {
     question1(100000);
-    // question1(3);
-    // cout << solution1(4) << endl; // O(n^2)复杂度
-    // cout << solution2(4) << endl; // O(n)复杂度
-    // int a[] = {1, 5, 10, 4, 9, 6, 2};
-    // FirstAndSecondMaximum(a, 7);
+    question1(3);
+    cout << solution1(4) << endl; // O(n^2)复杂度
+    cout << solution2(4) << endl; // O(n)复杂度
+    int a[] = {1, 5, 10, 4, 9, 6, 2};
+    FirstAndSecondMaximum(a, 7);
     Complex c1(1, 2), c2(3, 4);
     cout << "Complex c1: " << c1 << endl;
     cout << "Complex c2: " << c2 << endl;

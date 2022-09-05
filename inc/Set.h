@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <cstdio>
-#include "inc/Macro.h"
+#include "Macro.h"
 
 template <class T>
 class Set
