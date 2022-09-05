@@ -1,0 +1,3 @@
+project(DS)
+include_directories(.)
+add_executable(DS main.cpp)
