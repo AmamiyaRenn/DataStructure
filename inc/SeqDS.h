@@ -39,9 +39,9 @@ public:
     }
 
 protected:
-    int32_t capacity; // 容器容量
-    int32_t length;   // 元素计数器
-    int32_t *data;    // 元素
+    const int32_t capacity; // 容器容量
+    int32_t length;         // 元素计数器
+    int32_t *data;          // 元素
 };
 
 #endif

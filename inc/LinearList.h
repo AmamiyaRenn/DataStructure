@@ -72,12 +72,20 @@ public:
     // 删除所有的最大元素// TODO: implement
     void remove_all_maximum()
     {
-        int32_t posRecorder[this->length] = {}, max = this->data[0], cnt = 1;
+        int32_t posRecorder[MAX_N] = {}, max = this->data[0], cnt = 1;
         for (int32_t i = 1; i < this->length; i++)
             if (max < this->data[i])
                 max = this->data[i], posRecorder[0] = i, cnt = 1;
             else if (max == this->data[i])
                 posRecorder[cnt++] = i;
+        int32_t j = 0, k = 0, newData[MAX_N] = {};
+        for (int32_t i = 0; i < this->length; i++)
+            if (this->data[posRecorder[j]] == this->data[i] && j < cnt)
+                j++;
+            else
+                newData[k++] = data[i];
+        memcpy(this->data, newData, sizeof(T) * k);
+        this->length = k;
     }
 };
 
