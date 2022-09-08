@@ -69,7 +69,7 @@ public:
                 break;
         }
     }
-    // 删除所有的最大元素// TODO: implement
+    // 删除所有的最大元素
     void remove_all_maximum()
     {
         int32_t posRecorder[MAX_N] = {}, max = this->data[0], cnt = 1;
