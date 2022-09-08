@@ -3,6 +3,6 @@
 
 #include "SeqDS.h"
 #include "Set.h"
-#include "LinearList.h"
+#include "SeqList.h"
 
 #endif

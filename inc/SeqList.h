@@ -1,10 +1,10 @@
-﻿#ifndef _LINEARLIST_H
-#define _LINEARLIST_H
+﻿#ifndef _SEQLIST_H
+#define _SEQLIST_H
 
 #include "SeqDS.h"
 
 template <class T>
-class LinearList : public SeqDS<T>
+class SeqList : public SeqDS<T>
 {
 public:
     // 一次性把所有的构造函数都引用过来
