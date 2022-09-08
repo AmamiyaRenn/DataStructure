@@ -11,9 +11,9 @@ int main()
     cout << "s1: " << s1 << endl;
     cout << "s2: " << s2 << endl;
     s1.insert(2, 2);
-    cout << "s1.insert(1, 2): " << s1 << endl;
-    s1.remove(4);
-    cout << "s1.remove(5): " << s1 << endl;
+    cout << "s1.insert(2, 2): " << s1 << endl;
+    s1.remove(3);
+    cout << "s1.remove(3): " << s1 << endl;
     int c[] = {-1, 2, 3, 7, -4, -5, 6, 7};
     SeqList<int> s3(c, 8);
     s3.move_all_neg_aheadOf_nonneg();

@@ -32,8 +32,7 @@ public:
     {
         if (index < 0 || index > this->length || this->isFull())
             return false;
-        for (int32_t i = this->length; i > index; i--)
-            this->data[i] = this->data[i - 1]; // TODO:用memcpy是否会更快一些？
+        memcpy(this->data + index + 1, this->data + index, sizeof(T) * (this->length - index));
         this->data[index] = e;
         this->length++;
         return true;
@@ -48,8 +47,7 @@ public:
     {
         if (index < 0 || index >= this->length)
             return false;
-        for (int i = index; i < this->length - 1; i++)
-            this->data[i] = this->data[i + 1];
+        memcpy(this->data + index, this->data + index + 1, sizeof(T) * (this->length - index));
         this->length--;
         return true;
     }
