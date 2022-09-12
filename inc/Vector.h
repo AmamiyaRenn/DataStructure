@@ -1,10 +1,8 @@
 ﻿#ifndef _VECTOR_H
 #define _VECTOR_H
 
-#include <iostream>
-
-using Rank = int32_t;
-const Rank DEFAULT_CAPACITY = 2;
+#include "Macro.h"
+#include "Fibonacci.h"
 
 template <class T>
 class Vector
@@ -95,6 +93,18 @@ public:
     {
         for (Rank i = 0; i < this->size; i++)
             opt(this->element[i]);
+    }
+    Rank binSearch(const T &e, Rank low, Rank high){};
+    Rank fibSearch(const T &e, Rank low, Rank high)
+    {
+        for (Fibonacci fib(high - low); low < high;)
+        {
+            while (high - low < fib.get())
+                fib.prev();                    // fib(k)永远在[low, high)区间内
+            Rank middle = low + fib.get() - 1; // 轴点为fib(k-1)-1
+            e < this->element[middle] ? high = middle : low = middle + 1;
+        }
+        return --low; // 循环结束时，low为大于e的最小秩，所以要--
     }
 
 protected:

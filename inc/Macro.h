@@ -1,9 +1,9 @@
-﻿#ifndef _MACRO_H
-#define _MACRO_H
+﻿#pragma once
 
 #include <iostream>
 #include <cstdio>
 
-const int32_t MAX_N = 10009;
+using Rank = int32_t;
 
-#endif
+const int32_t MAX_N = 10009;
+const Rank DEFAULT_CAPACITY = 2;
