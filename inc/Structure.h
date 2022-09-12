@@ -5,4 +5,6 @@
 #include "Set.h"
 #include "SeqList.h"
 
+#include "Vector.h"
+
 #endif
