@@ -91,6 +91,8 @@ public:
     ListNodePos<T> first() const { return head->next; }
     // 尾节点位置
     ListNodePos<T> last() const { return tail->prev; }
+    T &firstElement() { return first()->element; }
+    T &lastElement() { return last()->element; }
     Rank getSize() const { return size; }
     bool empty() const { return !size; }
     // 在无序列表内的节点p的n个真前驱中找第一个找到的e的位置

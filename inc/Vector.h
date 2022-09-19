@@ -70,11 +70,11 @@ public:
     Rank remove(Rank low, Rank high)
     {
         if (low == high)
-            return;
+            return 0;
         while (high < size)
             element[low++] = element[high++];
         size = low;
-        shrink();
+        // shrink();
         return high - low;
     }
     /**
@@ -158,6 +158,7 @@ private:
             element[i] = oldElement[i];
         delete[] oldElement;
     }
+    // FIXME: Error
     void shrink()
     {
         if (size < DEFAULT_CAPACITY || size > capacity << 1)
