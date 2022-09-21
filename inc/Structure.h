@@ -4,5 +4,6 @@
 #include "Vector.h"
 #include "List.h"
 #include "Stack.h"
+#include "Queue.h"
 
 #endif

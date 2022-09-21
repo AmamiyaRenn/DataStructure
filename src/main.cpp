@@ -28,5 +28,14 @@ int main()
     for (int i = 0; i != size; i++)
         cout << s1.pop() << " ";
 
+    Queue<int> q;
+    for (int i = 0; i != 10; i++)
+        q.enqueue(a[i]);
+    cout << q.dequeue() << endl;
+    cout << q.front() << " " << q.rear() << endl;
+    q.rear() = 1;
+    q.enqueue(9);
+    cout << q.dequeue() << " " << q.dequeue() << endl;
+
     return 0;
 }
