@@ -8,7 +8,7 @@ template <class T>
 class Vector
 {
 public:
-    Vector() : capacity(DEFAULT_CAPACITY), size(0), element(nullptr){};
+    Vector() : capacity(DEFAULT_CAPACITY), size(0), element(new T[DEFAULT_CAPACITY]){};
     Vector(const T *element, Rank size) { copyFrom(element, 0, size); }
     Vector(const T *element, Rank low, Rank high) { copyFrom(element, low, high); }
     Vector(const Vector<T> &v) { copyFrom(v.element, 0, v.size); }
@@ -53,11 +53,11 @@ public:
      */
     void insert(Rank r, const T &e)
     {
-        size++;
         expand();
         for (Rank i = size; i > r; i--)
             element[i] = element[i - 1];
         element[r] = e;
+        size++;
     }
     // 在末尾插入元素
     void insert(const T &e) { insert(size, e); }
@@ -74,7 +74,7 @@ public:
         while (high < size)
             element[low++] = element[high++];
         size = low;
-        // shrink();
+        shrink();
         return high - low;
     }
     /**
@@ -158,10 +158,9 @@ private:
             element[i] = oldElement[i];
         delete[] oldElement;
     }
-    // FIXME: Error
     void shrink()
     {
-        if (size < DEFAULT_CAPACITY || size > capacity << 1)
+        if (capacity < DEFAULT_CAPACITY << 1 || size << 2 > capacity)
             return;
         T *oldElement = element;
         element = new T[capacity >>= 1];

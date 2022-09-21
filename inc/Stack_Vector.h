@@ -6,6 +6,8 @@ template <class T>
 class Stack : Vector<T>
 {
 public:
+    using Vector::empty;
+    using Vector::getSize;
     using Vector::Vector;
     void push(const T &element) { this->insert(element); }
     T pop() { return this->remove(this->size - 1); }

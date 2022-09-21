@@ -1,5 +1,5 @@
 ﻿#include <ctime>
-#include "inc/Structure.h"
+#include "../inc/Structure.h"
 
 using namespace std;
 
@@ -24,6 +24,9 @@ int main()
     cout << s1.top() << endl;
     s1.push(-1);
     cout << s1.top() << endl;
+    int size = s1.getSize();
+    for (int i = 0; i != size; i++)
+        cout << s1.pop() << " ";
 
     return 0;
 }
