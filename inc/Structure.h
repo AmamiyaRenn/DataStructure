@@ -5,5 +5,6 @@
 #include "List.h"
 #include "Stack.h"
 #include "Queue.h"
+#include "Queue_Circular.h"
 
 #endif

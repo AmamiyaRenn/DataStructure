@@ -11,5 +11,13 @@ int main()
     maze.solution(1, 1);
     cout << maze.ans() << endl;
 
+    QueueCircular<char> q(4);
+    q.enqueue('a');
+    q.enqueue('b');
+    q.enqueue('c');
+    char x;
+    q.dequeue(x);
+    cout << x << " " << q.front() << " " << endl;
+
     return 0;
 }
