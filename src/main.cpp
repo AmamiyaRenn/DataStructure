@@ -1,41 +1,15 @@
 ﻿#include <ctime>
+#include <sstream>
 #include "../inc/Structure.h"
+#include "app/Maze.h"
 
 using namespace std;
 
-template <class T>
-struct Increase
-{
-    void operator()(T &e) { e++; }
-};
-
 int main()
 {
-    int a[] = {2, -5, 3, 5, 0, -2, 1, 9, 4, 5};
-    int b[] = {2, 6, 4, 5, 8};
-#ifdef STACK_VECTOR
-    Stack<int> s1(a, 10);
-#else
-    Stack<int> s1;
-    for (int i = 0; i < 10; i++)
-        s1.push(a[i]);
-#endif
-    cout << s1.pop() << endl;
-    cout << s1.top() << endl;
-    s1.push(-1);
-    cout << s1.top() << endl;
-    int size = s1.getSize();
-    for (int i = 0; i != size; i++)
-        cout << s1.pop() << " ";
-
-    Queue<int> q;
-    for (int i = 0; i != 10; i++)
-        q.enqueue(a[i]);
-    cout << q.dequeue() << endl;
-    cout << q.front() << " " << q.rear() << endl;
-    q.rear() = 1;
-    q.enqueue(9);
-    cout << q.dequeue() << " " << q.dequeue() << endl;
+    Maze maze;
+    maze.solution(1, 1);
+    cout << maze.ans() << endl;
 
     return 0;
 }
