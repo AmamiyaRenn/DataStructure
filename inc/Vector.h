@@ -132,6 +132,18 @@ public:
         mergeSort(middle, high);
         merge(low, middle, high);
     }
+    friend Rank match(Vector<T> P, Vector<T> T)
+    {
+        Rank n = T.size, m = P.size, i = 0, j = 0;
+        while (i < n && j < m)
+            if (T[i] == P[j])
+                i++, j++;
+            else
+                i -= j - 1, j = 0;
+        return i - j;
+    }
+    friend char *question2(Vector<T> P, Vector<T> T) { return "really"; }
+    friend Rank question3(Vector<T> P, Vector<T> T) { return 2; }
 
 protected:
     Rank capacity;

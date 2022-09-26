@@ -1,23 +1,16 @@
 ﻿#include <ctime>
 #include <sstream>
 #include "../inc/Structure.h"
-#include "app/Maze.h"
 
 using namespace std;
 
 int main()
 {
-    Maze maze;
-    maze.solution(1, 1);
-    cout << maze.ans() << endl;
-
-    QueueCircular<char> q(4);
-    q.enqueue('a');
-    q.enqueue('b');
-    q.enqueue('c');
-    char x;
-    q.dequeue(x);
-    cout << x << " " << q.front() << " " << endl;
+    const char a[] = "I really want to stay at your house, really", b[] = "really stay", c[] = "really";
+    Vector<char> P(b, strlen(b)), T(a, strlen(a));
+    cout << question2(P, T) << endl;
+    Vector<char> C(c, strlen(c));
+    cout << question3(C, T) << endl;
 
     return 0;
 }
