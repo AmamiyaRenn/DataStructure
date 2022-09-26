@@ -142,8 +142,6 @@ public:
                 i -= j - 1, j = 0;
         return i - j;
     }
-    friend char *question2(Vector<T> P, Vector<T> T) { return "really"; }
-    friend Rank question3(Vector<T> P, Vector<T> T) { return 2; }
 
 protected:
     Rank capacity;
