@@ -1,8 +1,6 @@
 ﻿#pragma once
 
-#include <iostream>
-
-using Rank = int32_t;
+#include "Macro.h"
 
 template <class T>
 struct ListNode;

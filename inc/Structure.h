@@ -6,5 +6,6 @@
 #include "Stack.h"
 #include "Queue.h"
 #include "Queue_Circular.h"
+#include "BinTree.h"
 
 #endif
