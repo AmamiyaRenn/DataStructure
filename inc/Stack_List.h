@@ -7,9 +7,9 @@ class Stack : List<T>
 {
 public:
     using List::empty;
-    using List::getSize;
     using List::List;
+    using List::Size;
     void push(const T &element) { this->insertAsLast(element); }
     T pop() { return this->remove(this->last()); }
-    T &top() { return this->lastElement(); }
+    T &top() { return this->last()->element; }
 };

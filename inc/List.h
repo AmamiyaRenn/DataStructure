@@ -74,24 +74,35 @@ public:
             p = p->next;
         return p->element;
     }
-    friend std::ostream &operator<<(std::ostream &os, const List<T> &u)
+    // 正向遍历
+    template <typename VST>
+    void travForward(VST &visit)
     {
-        ListNodePos<T> p = u.first();
-        Rank n = u.getSize();
+        ListNodePos<T> p = first();
+        Rank n = Size();
         while (0 < n--)
         {
-            os << p->element << " ";
+            visit(p->element);
             p = p->next;
         }
-        return os;
+    }
+    // 反向遍历
+    template <typename VST>
+    void travBackward(VST &visit)
+    {
+        ListNodePos<T> p = last();
+        Rank n = Size();
+        while (0 < n--)
+        {
+            visit(p->element);
+            p = p->prev;
+        }
     }
     // 首节点位置
     ListNodePos<T> first() const { return head->next; }
     // 尾节点位置
     ListNodePos<T> last() const { return tail->prev; }
-    T &firstElement() { return first()->element; }
-    T &lastElement() { return last()->element; }
-    Rank getSize() const { return size; }
+    Rank Size() const { return size; }
     bool empty() const { return !size; }
     // 在无序列表内的节点p的n个真前驱中找第一个找到的e的位置
     ListNodePos<T> find(const T &e, Rank n, ListNodePos<T> p) const
@@ -228,6 +239,15 @@ public:
             if (max->element <= (p = p->next)->element)
                 max = p;
         return max;
+    }
+    // p后n个元素内找到最小的元素返回其位置
+    ListNodePos<T> selectMin(ListNodePos<T> p, Rank n)
+    {
+        ListNodePos<T> min = p;
+        for (; 1 < n; n--)
+            if (min->element >= (p = p->next)->element)
+                min = p;
+        return min;
     }
 
 protected:
