@@ -51,16 +51,17 @@ public:
      * @param r 指定秩
      * @param e 元素
      */
-    void insert(Rank r, const T &e)
+    Rank insert(Rank r, const T &e)
     {
         expand();
         for (Rank i = size; i > r; i--)
             element[i] = element[i - 1];
         element[r] = e;
         size++;
+        return r;
     }
     // 在末尾插入元素
-    void insert(const T &e) { insert(size, e); }
+    Rank insert(const T &e) { return insert(size, e); }
     /**
      * @brief 删除[low, high)的元素
      * @param low 左闭
