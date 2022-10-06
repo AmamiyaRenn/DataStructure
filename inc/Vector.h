@@ -26,13 +26,6 @@ public:
         copyFrom(v.element, 0, v.size);
         return *this;
     };
-    // 输出结构中所有元素
-    friend std::ostream &operator<<(std::ostream &os, const Vector &u)
-    {
-        for (Rank i = 0; i < u.size; i++)
-            os << u[i] << " ";
-        return os;
-    }
     Rank getSize() const { return size; }
     bool empty() const { return !size; }
     bool full() const { return size == capacity; }
