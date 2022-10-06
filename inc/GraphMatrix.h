@@ -24,9 +24,9 @@ public:
     // 顶点状态
     virtual VStatus &status(Rank v) { return V[v].status; }
     // 顶点的时间标签dTime
-    virtual DSize &dTime(Rank v) { return V[v].dTime; }
+    virtual Rank &dTime(Rank v) { return V[v].dTime; }
     // 顶点的时间标签fTime
-    virtual DSize &fTime(Rank v) { return V[v].fTime; }
+    virtual Rank &fTime(Rank v) { return V[v].fTime; }
     // 顶点在遍历树中的父亲
     virtual Rank &parent(Rank v) { return V[v].parent; }
     // 顶点在遍历树中的优先级
@@ -74,13 +74,13 @@ public:
     // 边数据
     virtual Te &edge(Rank v, Rank u) { return E[v][u]->data; }
     // 边权重
-    virtual DSize &weight(Rank v, Rank u) { return E[v][u]->weight; }
+    virtual Rank &weight(Rank v, Rank u) { return E[v][u]->weight; }
     // 边类型
     virtual EType &type(Rank v, Rank u) { return E[v][u]->type; }
     // 边(v, u)是否存在
     virtual bool exists(Rank v, Rank u) { return (v < this->n) && (u < this->n) && E[v][u] != nullptr; }
     // 在两个顶点之间插入指定权重的边
-    virtual void insert(const Te &edge, DSize w, Rank v, Rank u)
+    virtual void insert(const Te &edge, Rank w, Rank v, Rank u)
     {
         if (exists(v, u))
             return;
