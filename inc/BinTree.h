@@ -13,16 +13,27 @@ template <class T>
 struct BinNode
 {
     T data;
-    Rank height;
     BinNodePos<T> parent, lChild, rChild;
+    Rank height;
     BinNode(){};
-    BinNode(T data, BinNodePos<T> xarent = nullptr, BinNodePos<T> lChild = nullptr, BinNodePos<T> rChild = nullptr)
-        : data(data), parent(parent), lChild(lChild), rChild(rChild){};
-    Rank stature() const { return (*this) ? height : -1; }
+    BinNode(T data, BinNodePos<T> parent = nullptr, BinNodePos<T> lChild = nullptr, BinNodePos<T> rChild = nullptr, Rank height = 0)
+        : data(data), parent(parent), lChild(lChild), rChild(rChild), height(0){};
+    Rank stature() const { return this == nullptr ? -1 : height; }
+    // 统计当前节点后代总数，亦即以其为根的子树的规模
+    Rank size()
+    {
+        Rank s = 1;
+        if (lChild)
+            s += lChild->size();
+        if (rChild)
+            s += rChild->size();
+    }
+    // 返回x的父亲指向x所用的指针
+    BinNodePos<T> &ParentPtrToThis() { return parent != nullptr ? (parent->lChild == this ? parent->lChild : parent->rChild) : parent; }
     // 将e作为当前节点的左孩子插入二叉树
-    BinNodePos<T> insertAsLChild(const T &e) { return lChild = new BinNodePos<T>(e, this); }
+    BinNodePos<T> insertAsLChild(const T &e) { return lChild = new BinNode<T>(e, this); }
     // 将e作为当前节点的右孩子插入二叉树
-    BinNodePos<T> insertAsRChild(const T &e) { return rChild = new BinNodePos<T>(e, this); }
+    BinNodePos<T> insertAsRChild(const T &e) { return rChild = new BinNode<T>(e, this); }
     template <typename VST>
     void travPre(VST &visit)
     {
@@ -86,6 +97,17 @@ struct BinNode
     template <typename VST>
     void travLevel(VST &visit)
     {
+        Queue<BinNodePos<T>> Q;
+        Q.enqueue(this);
+        while (!Q.empty())
+        {
+            BinNodePos<T> x = Q.dequeue();
+            visit(x->data);
+            if (x->lChild)
+                Q.enqueue(x->lChild);
+            if (x->rChild)
+                Q.enqueue(x->rChild);
+        }
     }
 };
 
@@ -93,12 +115,32 @@ template <class T>
 class BinTree
 {
 public:
-    BinTree() : size(0), root(nullptr){};
+    BinTree(Rank size = 0, BinNodePos<T> root = nullptr) : size(size), root(root){};
+    // 层次构造一个完全二叉树
+    BinTree(Rank n, T *a)
+    {
+        Queue<BinNodePos<T>> Q;
+        insert(a[0]);
+        Q.enqueue(root);
+        for (Rank i = 1; i < n - 1; i += 2)
+        {
+            BinNodePos<T> node = Q.dequeue();
+            insert(a[i], node);
+            Q.enqueue(node->lChild);
+            insert(node, a[i + 1]);
+            Q.enqueue(node->rChild);
+        }
+        if (size != n)
+            insert(a[n - 1], Q.dequeue());
+    }
+    ~BinTree(){};
+    Rank Size() const { return size; }
+    BinNodePos<T> Root() const { return root; }
     // 把e作为根节点插入
     BinNodePos<T> insert(const T &e)
     {
         size = 1;
-        return root = new BinNodePos<T>(e);
+        return root = new BinNode<T>(e);
     }
     // 把e作为x的左孩子插入，并返回e的位置
     BinNodePos<T> insert(const T &e, BinNodePos<T> x)
@@ -115,6 +157,47 @@ public:
         x->insertAsRChild(e);
         updateHeightAbove(x);
         return x->rChild;
+    }
+    // 删除二叉树中位置x处的节点及其后代，返回被删除节点的数值
+    Rank remove(BinNodePos<T> x)
+    {
+        x->ParentPtrToThis() = nullptr;
+        updateHeightAbove(x->parent);
+        Rank n = removeAt(x);
+        size -= n;
+        return n;
+    }
+    // 左子树接入：S当作节点x的左子树接入二叉树，S本身置空，返回x
+    BinNodePos<T> attach(BinTree<T> *&S, BinNodePos<T> x)
+    {
+        if (x->lChild = S->root)
+            x->lChild->parent = x;
+        size += S->size;
+        updateHeightAbove(x);
+        delete S;
+        S = nullptr;
+        return x;
+    }
+    // 右子树接入：S当作节点x的右子树接入二叉树，S本身置空，返回x
+    BinNodePos<T> attach(BinNodePos<T> x, BinTree<T> *&S)
+    {
+        if (x->rChild = S->root)
+            x->rChild->parent = x;
+        size += S->size;
+        updateHeightAbove(x);
+        delete S;
+        S = nullptr;
+        return x;
+    }
+    // 子树分离：将子树x从当前树中摘除，将其封装为一棵独立子树返回
+    BinTree<T> detach(BinNodePos<T> x)
+    {
+        x->ParentPtrToThis() = nullptr;
+        updateHeightAbove(x->parent);
+        x->parent = nullptr;
+        BinTree<T> *S = new BinTree<T>(x->size(), x);
+        size -= S->size;
+        return S;
     }
     // 前序遍历
     template <typename VST>
@@ -150,6 +233,7 @@ protected:
     BinNodePos<T> root;
     // 更新x节点高度
     Rank updateHeight(BinNodePos<T> x) { return x->height = 1 + std::max(x->lChild->stature(), x->rChild->stature()); }
+    // 更新x节点及其所有祖先高度
     void updateHeightAbove(BinNodePos<T> x)
     {
         while (x)
@@ -157,5 +241,16 @@ protected:
             updateHeight(x);
             x = x->parent;
         }
+    }
+
+private:
+    // 删除二叉树中位置x处的节点及其后代，返回被删除节点的数值
+    Rank removeAt(BinNodePos<T> x)
+    {
+        if (!x)
+            return 0;
+        Rank n = 1 + removeAt(x->lChild) + removeAt(x->rChild);
+        delete x;
+        return n;
     }
 };

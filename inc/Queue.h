@@ -7,10 +7,10 @@ class Queue : protected List<T>
 {
 public:
     using List::empty;
-    using List::getSize;
     using List::List;
+    using List::Size;
     void enqueue(const T &e) { this->insertAsLast(e); }
-    T dequeue() { return this->remove(this->last()); }
+    T dequeue() { return this->remove(this->first()); }
     T &front() { return this->first()->element; }
     T &rear() { return this->lastElement(); }
 };
