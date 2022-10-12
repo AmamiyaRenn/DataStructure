@@ -2,7 +2,7 @@
 
 #include "List.h"
 
-template <class T>
+template <typename T>
 class Stack : List<T>
 {
 public:

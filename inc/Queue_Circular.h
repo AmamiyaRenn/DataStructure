@@ -4,7 +4,7 @@
 
 // 用于机器人代码
 // 循环队列类
-template <class T>
+template <typename T>
 class QueueCircular
 {
 public:

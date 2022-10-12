@@ -3,13 +3,13 @@
 #include "Macro.h"
 #include "Stack.h"
 
-template <class T>
+template <typename T>
 struct BinNode;
 
-template <class T>
+template <typename T>
 using BinNodePos = BinNode<T> *;
 
-template <class T>
+template <typename T>
 struct BinNode
 {
     T data;
@@ -111,7 +111,7 @@ struct BinNode
     }
 };
 
-template <class T>
+template <typename T>
 class BinTree
 {
 public:

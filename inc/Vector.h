@@ -4,7 +4,7 @@
 #include "Macro.h"
 #include "Fibonacci.h"
 
-template <class T>
+template <typename T>
 class Vector
 {
 public:

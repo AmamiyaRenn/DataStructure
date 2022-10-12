@@ -2,7 +2,7 @@
 
 #include "Vector.h"
 
-template <class T>
+template <typename T>
 class Stack : Vector<T>
 {
 public:

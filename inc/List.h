@@ -2,13 +2,13 @@
 
 #include "Macro.h"
 
-template <class T>
+template <typename T>
 struct ListNode;
 
-template <class T>
+template <typename T>
 using ListNodePos = ListNode<T> *;
 
-template <class T>
+template <typename T>
 struct ListNode
 {
     T element;
@@ -39,7 +39,7 @@ struct ListNode
     }
 };
 
-template <class T>
+template <typename T>
 class List
 {
 public:
