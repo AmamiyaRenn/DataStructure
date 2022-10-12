@@ -13,10 +13,10 @@ enum class VStatus
 enum class EType
 {
     Undetermined,
-    Tree,
-    Cross,
-    Forward,
-    Backward
+    Tree,    // 树边
+    Cross,   // 跨边
+    Forward, // 前向边（指向子孙）
+    Backward // 后向边（指向祖先）
 };
 
 template <typename Tv>
@@ -43,7 +43,13 @@ struct Edge
     Edge(const Te &d = (Te)0, Rank weight = 0) : data(d), weight(weight), type(EType::Undetermined){};
 };
 
-template <typename Tv, typename Te> // 顶点类型，边类型
+/**
+ * @brief 图模板
+ * @details CD is Connected Domain
+ * @tparam Tv 顶点类型
+ * @tparam Te 边类型
+ */
+template <typename Tv, typename Te>
 class Graph
 {
 public:
@@ -86,42 +92,118 @@ public:
     virtual Te remove(Rank, Rank) = 0;
     // 多连通域BFS
     template <typename VST>
-    void BFS(Rank s, VST &visit)
+    void bfs(Rank s, VST &visit)
     {
         reset();
         Rank clock = 0, v = s;
         do
             if (status(v) == VStatus::Undiscovered)
-                BFS_ConnectedDomain(v, clock);
-        while (s != (v = (v + 1) % n));
+                BFS_CD(v, clock);
+        while (s != (v = (++v % n)));
     }
     // 多连通域DFS
     template <typename VST>
-    void DFS(Rank s, VST &visit)
+    void dfs(Rank s, VST &visit)
     {
         reset();
         Rank clock = 0, v = s;
         do
             if (status(v) == VStatus::Undiscovered)
-                DFS_ConnectedDomain(v, clock);
-        while (s != (v = (v + 1) % n));
+                DFS_CD(v, clock);
+        while (s != (v = (++v % n)));
     }
+    /**
+     * @brief 多连通域基于DFS的拓扑排序算法
+     * @return Stack<Tv>* 自顶向下排序排序的栈，如果为空则不存在拓扑排序
+     */
     Stack<Tv> *TopoSort(Rank s)
     {
+        reset();
+        Rank clock = 0, v = s;
         Stack<Tv> *S = new Stack<Tv>;
-        struct PushEdge
+        do
         {
-            PushEdge(Stack<Tv> *edges) : edges(edges){};
-            void operator()(Tv edge) { edges->push(edge); }
-            Stack<Tv> *edges;
-        } pushEdge(S);
-        DFS(s, pushEdge);
+            if (status(v) == VStatus::Undiscovered)
+                if (!TopoSort_CD(v, clock, S))
+                    while (!S->empty())
+                        S->pop();
+            break;
+        } while (s != (v = (++v % n)));
         return S;
+    }
+    // 多连通域基于DFS的双连通分量分解算法
+    void bcc(Rank s)
+    {
+        reset();
+        Rank clock = 0, v = s;
+        Stack<Rank> S; // 用栈记录已经访问过的顶点
+        do
+        {
+            if (status(v) == VStatus::Undiscovered)
+                BCC_CD(v, clock, S);
+            S.pop();
+        } while (s != (v = (++v % n)));
+    }
+    // 最短路径Dijkstra算法
+    void dijkstra(Rank s)
+    {
+        struct dijkstraPrioUpdater
+        {
+            void operator()(Graph<Tv, Te> *G, Rank v, Rank u)
+            {
+                if (G->status(u) == VStatus::Undiscovered)
+                {
+                    Rank newPriority = G->priority(v) + G->weight(v, u);
+                    if (newPriority < G->priority(u))
+                    {
+                        G->priority(u) = newPriority;
+                        G->parent(u) = v;
+                    }
+                }
+            }
+        } prioUpdater;
+        pfs(s, prioUpdater, print<Rank>());
+    }
+    // 最小支撑树Prim算法
+    void prim(Rank s)
+    {
+        struct dijkstraPrioUpdater
+        {
+            void operator()(Graph<Tv, Te> *G, Rank v, Rank u)
+            {
+                if (G->status(u) == VStatus::Undiscovered)
+                {
+                    Rank newPriority = G->weight(v, u);
+                    if (newPriority < G->priority(u))
+                    {
+                        G->priority(u) = newPriority;
+                        G->parent(u) = v;
+                    }
+                }
+            }
+        } prioUpdater;
+        pfs(s, prioUpdater, print<Rank>());
+    }
+    template <typename PrioUpdater, typename VST>
+    /**
+     * @param s 优先级搜索框架
+     * @param prioUpdater 优先级更新策略
+     * @param visit 访问方法
+     */
+    void pfs(Rank s, PrioUpdater prioUpdater, VST &visit)
+    {
+        reset();
+        Rank v = s;
+        do
+        {
+            if (status(v) == VStatus::Undiscovered)
+                PFS_CD(v, prioUpdater, visit);
+        } while (s != (v = (++v % n)));
     }
 
 protected:
     Rank n; // 顶点个数
-    Rank e; // 边总数
+    Rank e; // 边总数（这里约定，无向边均统一转化为方向互逆的一对有向边，从而将无向图视作有向图的特例）
 
 private:
     // 所有辅助信息复位
@@ -138,9 +220,9 @@ private:
                     type(v, u) = EType::Undetermined;
         }
     }
-    // 连通域BFS；dTime为代际标签，fTime为兄弟标签
+    // （连通域）BFS；dTime为代际标签，fTime为兄弟标签
     template <typename VST>
-    void BFS_ConnectedDomain(Rank v, Rank &clock, VST &visit)
+    void BFS_CD(Rank v, Rank &clock, VST &visit)
     {
         Queue<Rank> Q;
         status(v) = VStatus::Discoverd;
@@ -173,9 +255,38 @@ private:
         }
         clock = dTime(v) + 1;
     }
-    // 连通域DFS
+    // （连通域）DFS
     template <typename VST>
-    void DFS_ConnectedDomain(Rank v, Rank &clock, VST &visit)
+    void DFS_CD(Rank v, Rank &clock, VST &visit)
+    {
+        status(v) = VStatus::Discoverd;                        // v被发现
+        dTime(v) = clock++;                                    // 记录v被发现的时间
+        for (Rank u = firstNbr(v); - 1 < u; u = nextNbr(v, u)) // 检查v的邻居
+            switch (status(u))
+            {
+            case VStatus::Undiscovered:
+                type(v, u) = EType::Tree;
+                parent(u) = v;
+                DFS_CD(u, clock);
+                break;
+
+            case VStatus::Discoverd:
+                type(v, u) = EType::Backward;
+
+            case VStatus::Visited:
+                type(v, u) = (dTime(v) < dTime(u)) ? EType::Forward : EType::Cross;
+                break;
+            }
+        visit(v);
+        status(v) = VStatus::Visited;
+        fTime(v) = clock++;
+    }
+    /**
+     * @brief （连通域）基于DFS的拓扑排序算法
+     * @return true v及其后代可以拓扑排序
+     * @return false v及其后代不可以拓扑排序
+     */
+    bool *TopoSort_CD(Rank v, Rank &clock, Stack<Tv> *S)
     {
         status(v) = VStatus::Discoverd;
         dTime(v) = clock++;
@@ -185,18 +296,87 @@ private:
             case VStatus::Undiscovered:
                 type(v, u) = EType::Tree;
                 parent(u) = v;
-                DFS_ConnectedDomain(u, clock);
+                if (!TopoSort_CD(u, clock, S))
+                    return false; // u及其后代存在后向边则不可拓扑排序，递归返回false
                 break;
 
             case VStatus::Discoverd:
                 type(v, u) = EType::Backward;
+                return false; // v及其后代存在后向边则不可拓扑排序
 
-            default:
+            case VStatus::Visited:
                 type(v, u) = (dTime(v) < dTime(u)) ? EType::Forward : EType::Cross;
                 break;
             }
-        visit(v);
+        S->push(vertex(v));
         status(v) = VStatus::Visited;
         fTime(v) = clock++;
+        return true; // v及其后代可以拓扑排序
+    }
+#define hca(x) (fTime(x))
+    // （连通域）基于DFS的双连通分量分解算法
+    void BCC_CD(Rank v, Rank &clock, Stack<Rank> &S)
+    {
+        hca(v) = dTime(v) = clock++;
+        status(v) = VStatus::Discoverd;
+        S.push(v);
+        for (Rank u = firstNbr(v); - 1 < u; u = nextNbr(v, u))
+            switch (status(u))
+            {
+            case VStatus::Undiscovered:
+                type(v, u) = EType::Tree;
+                parent(u) = v;
+                BCC_CD(u, clock, S);
+                if (hca(u) < dTime(v)) // 递归回来后开始审问子节点
+                    hca(v) = std::min(hca(v), hca(u));
+                else // 定制算法，此处为简单的打印
+                {
+                    Rank temp;
+                    do
+                    {
+                        temp = S.pop();
+                        printf("%d ", temp)
+                    } while (u != temp);
+                    printf("%d\n", parent(u));
+                }
+                break;
+
+            case VStatus::Discoverd:
+                type(v, u) = EType::Backward;
+                // if (u != parent(v))// 不影响
+                hca(v) = std::min(hca(v), dTime(u));
+
+            case VStatus::Visited:
+                type(v, u) = (dTime(v) < dTime(u)) ? EType::Forward : EType::Cross;
+                break;
+            }
+        status(v) = VStatus::Visited;
+    }
+#undef hca
+    // （连通域）优先级搜索框架
+    template <typename PrioUpdater, typename VST>
+    void PFS_CD(Rank v, PrioUpdater prioUpdater, VST &visit)
+    {
+        priority(v) = 0;
+        visit(v);
+        parent(v) = -1;
+        status(v) = VStatus::Visited;
+        while (true)
+        {
+            for (Rank u = firstNbr(v); - 1 < u; u = nextNbr(v, u))
+                prioUpdater(this, v, u);
+            for (Rank shortest = INT_MAX, u = 0; u < n; u++)
+                if (status(u) == VStatus::Undiscovered)
+                    if (shortest > priority(u))
+                    {
+                        shortest = priority(u);
+                        v = u;
+                    }
+            if (status(v) == VStatus::Visited)
+                break;
+            visit(v);
+            status(v) = VStatus::Visited;
+            type(parent(v), v) = EType::Tree;
+        }
     }
 };
