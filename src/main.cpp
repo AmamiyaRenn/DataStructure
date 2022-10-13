@@ -1,13 +1,21 @@
 ﻿#include <ctime>
 #include <sstream>
 #include "../inc/Structure.h"
+#include "assert.h"
+#include "../app/CommuDictionary.h"
 
 using namespace std;
 
-int main()
+#define EntryAdd(sceneName, varName) (int)(sceneName), CommuID::varName, (size_t)(&varName), sizeof(varName)
+
+int main(void)
 {
-    const char a[] = "I really want to stay at your house, really", b[] = "really stay", c[] = "really";
-    Vector<char> P(b, strlen(b)), T(a, strlen(a));
+    CommuDictionary dictionary(3);
+    float WorldTime = 114.0;
+    int textNum = 514;
+    dictionary.addEntry((int)(SceneID::Chassis), CommuID::WorldTime, (size_t)(&WorldTime), sizeof(WorldTime));
+    dictionary.addEntry(EntryAdd(SceneID::Bluetooth, textNum));
+    dictionary.traverse(print<CommuEntry>());
 
     return 0;
 }
