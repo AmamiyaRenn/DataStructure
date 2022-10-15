@@ -227,7 +227,7 @@ private:
         Queue<Rank> Q;
         status(v) = VStatus::Discoverd;
         dTime(v) = clock;
-        Q.push(v);
+        Q.enqueue(v);
         clock = 0;
         while (!Q.empty())
         {
@@ -286,7 +286,7 @@ private:
      * @return true v及其后代可以拓扑排序
      * @return false v及其后代不可以拓扑排序
      */
-    bool *TopoSort_CD(Rank v, Rank &clock, Stack<Tv> *S)
+    bool TopoSort_CD(Rank v, Rank &clock, Stack<Tv> *S)
     {
         status(v) = VStatus::Discoverd;
         dTime(v) = clock++;
@@ -335,7 +335,7 @@ private:
                     do
                     {
                         temp = S.pop();
-                        printf("%d ", temp)
+                        printf("%d ", temp);
                     } while (u != temp);
                     printf("%d\n", parent(u));
                 }

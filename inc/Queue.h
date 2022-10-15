@@ -6,9 +6,9 @@ template <typename T>
 class Queue : protected List<T>
 {
 public:
-    using List::empty;
-    using List::List;
-    using List::Size;
+    using List<T>::empty;
+    using List<T>::List;
+    using List<T>::Size;
     void enqueue(const T &e) { this->insertAsLast(e); }
     T dequeue() { return this->remove(this->first()); }
     T &front() { return this->first()->element; }

@@ -8,7 +8,7 @@ template <typename Tv, typename Te>
 class GraphMatrix : public Graph<Tv, Te>
 {
 public:
-    using Graph::Graph;
+    using Graph<Tv, Te>::Graph;
     ~GraphMatrix()
     {
         for (Rank v = 0; v < this->n; v++)

@@ -126,11 +126,11 @@ public:
         mergeSort(middle, high);
         merge(low, middle, high);
     }
-    friend Rank match(Vector<T> P, Vector<T> T)
+    friend Rank match(Vector<T> Pattern, Vector<T> Text)
     {
-        Rank n = T.size, m = P.size, i = 0, j = 0;
+        Rank n = Text.size, m = Pattern.size, i = 0, j = 0;
         while (i < n && j < m)
-            if (T[i] == P[j])
+            if (Text[i] == Pattern[j])
                 i++, j++;
             else
                 i -= j - 1, j = 0;
@@ -145,7 +145,7 @@ protected:
 private:
     void copyFrom(const T *element, Rank low, Rank high)
     {
-        this->element = new T[capacity = max(DEFAULT_CAPACITY, 2 * (high - low))];
+        this->element = new T[capacity = std::max(DEFAULT_CAPACITY, 2 * (high - low))];
         for (size = 0; low < high; size++, low++)
             this->element[size] = element[low]; // 不能使用malloc，因为malloc只能实现浅拷贝
     }

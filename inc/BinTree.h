@@ -27,6 +27,7 @@ struct BinNode
             s += lChild->size();
         if (rChild)
             s += rChild->size();
+        return s;
     }
     // 返回x的父亲指向x所用的指针
     BinNodePos<T> &ParentPtrToThis() { return parent != nullptr ? (parent->lChild == this ? parent->lChild : parent->rChild) : parent; }
