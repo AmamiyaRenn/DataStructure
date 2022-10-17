@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <string.h>
+#include "../inc/Entry.h"
 #include "../inc/Vector.h"
 #include "../inc/List.h"
 
@@ -23,43 +24,23 @@ enum class CommuID
 };
 
 // 通讯词典词条
-struct CommuEntry
+struct CommuEntryValue
 {
-    CommuEntry(){};
-    CommuEntry(CommuID ID, void *address = NULL, int size = 0)
-        : ID(ID), address(address), size(size){};
-    CommuID ID;    // 唯一ID
+    CommuEntryValue(void *address = nullptr, uint8_t size = 0)
+        : address(address), size(size){};
     void *address; // 词条数据地址
     uint8_t size;  // 词条数据字节数
-    bool operator==(const CommuEntry &other) { return ID == other.ID; }
-    bool operator!=(const CommuEntry &other) { return ID != other.ID; }
-    bool operator<(const CommuEntry &other) { return ID < other.ID; }
-    bool operator<=(const CommuEntry &other) { return ID <= other.ID; }
-    bool operator>(const CommuEntry &other) { return ID > other.ID; }
-    bool operator>=(const CommuEntry &other) { return ID >= other.ID; }
-    long readData()
-    {
-        long data = 0;
-        memcpy(&data, address, size);
-        return data;
-    }
-    // for display
-    friend std::ostream &operator<<(std::ostream &os, CommuEntry &entry)
-    {
-        os << "ID: " << (int)entry.ID << " 10进制地址" << (size_t)entry.address << " 字节大小" << (int)entry.size << " 读来的数据输出为long: " << entry.readData() << "\n";
-        return os;
-    }
 };
 
 // 通讯词典
 class CommuDictionary
 {
 public:
-    CommuDictionary(int sceneNum) : Dictionary(Vector<List<CommuEntry>>(sceneNum)), sceneNum(sceneNum){};
+    CommuDictionary(int sceneNum) : Dictionary(Vector<List<Entry<CommuID, CommuEntryValue>>>(sceneNum, sceneNum)), sceneNum(sceneNum){};
     int SceneNum() const { return sceneNum; }
     // 添加词条
-    template <typename Entry>
-    void addEntry(SceneID sceneID, CommuID ID, Entry &entry) { Dictionary[(int)sceneID].insertAsLast(CommuEntry(ID, &entry, sizeof(Entry))); }
+    template <typename E>
+    void addEntry(SceneID sceneID, CommuID ID, E &entry) { Dictionary[(int)sceneID].insertAsLast(Entry<CommuID, CommuEntryValue>(ID, CommuEntryValue(&entry, sizeof(E)))); }
     // 词典有序化（添加完词条后需要有序化，才能让解码成功）
     void ordering()
     {
@@ -91,12 +72,12 @@ public:
              * @brief 把此词条编码入字节数组，编码格式为小端法:(4B->1B)ID->(1B)size->((size)B)数据内容
              * @param entry 词条
              */
-            void operator()(CommuEntry entry)
+            void operator()(Entry<CommuID, CommuEntryValue> entry)
             {
-                memcpy(buffer + offset++, &entry.ID, 1);
-                memcpy(buffer + offset++, &entry.size, 1);
-                memcpy(buffer + offset, entry.address, entry.size);
-                offset += entry.size;
+                memcpy(buffer + offset++, &entry.key, 1);
+                memcpy(buffer + offset++, &entry.value.size, 1);
+                memcpy(buffer + offset, entry.value.address, entry.value.size);
+                offset += entry.value.size;
             }
         };
         EncodeBuffer encodeBuffer(buffer, offset);
@@ -110,37 +91,37 @@ public:
      */
     size_t decode(SceneID sceneID, char *buffer, size_t offset = 0)
     {
-        static CommuEntry entry;
-        ListNodePos<CommuEntry> entryPos = Dictionary[(int)sceneID].first();
+        Entry<CommuID, CommuEntryValue> entry;
+        ListNodePos<Entry<CommuID, CommuEntryValue>> entryPos = Dictionary[(int)sceneID].first();
         while (true)
         {
-            memcpy(&entry.ID, buffer + offset++, 1);
-            memcpy(&entry.size, buffer + offset++, 1);
-            if ((int)entry.ID == 255 && entry.size == 255) // 到最后了
+            memcpy(&entry.key, buffer + offset++, 1);
+            memcpy(&entry.value.size, buffer + offset++, 1);
+            if ((int)entry.key == 255 && entry.value.size == 255) // 到最后了
                 return offset;
             while (true)
             {
-                if (entryPos->element.ID == entry.ID) // ID相同
+                if (entryPos->element == entry) // ID相同
                 {
-                    memcpy((entryPos->element.address), buffer + offset, entry.size);
+                    memcpy((entryPos->element.value.address), buffer + offset, entry.value.size);
                     entryPos = entryPos->next;
                     break;
                 }
-                else if (entryPos->element.ID < entry.ID)
+                else if (entryPos->element < entry)
                 {
                     if (entryPos == Dictionary[(int)sceneID].last())
                         break;
                     entryPos = entryPos->next;
                 }
-                else if (entryPos->element.ID > entry.ID)
+                else if (entryPos->element > entry)
                     break;
             }
-            offset += entry.size;
+            offset += entry.value.size;
         }
         return offset;
     }
 
 private:
-    Vector<List<CommuEntry>> Dictionary; // 因为场景个数是确定的且需要快速访问，而场景内词条需要完全遍历且不确定个数，所以用Vector<List>
+    Vector<List<Entry<CommuID, CommuEntryValue>>> Dictionary; // 因为场景个数是确定的且需要快速访问，而场景内词条需要完全遍历且不确定个数，所以用Vector<List>
     int sceneNum;
 };

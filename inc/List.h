@@ -13,8 +13,7 @@ struct ListNode
 {
     T element;
     ListNodePos<T> prev, next;
-    ListNode(){};
-    ListNode(T element, ListNodePos<T> prev = nullptr, ListNodePos<T> next = nullptr) : element(element), prev(prev), next(next){};
+    ListNode(T element = T(), ListNodePos<T> prev = nullptr, ListNodePos<T> next = nullptr) : element(element), prev(prev), next(next){};
     /**
      * @brief 作为当前节点的前一个节点插入
      * @return ListNodePos<T> 新节点位置

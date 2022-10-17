@@ -8,7 +8,9 @@ template <typename T>
 class Vector
 {
 public:
-    Vector(const Rank capacity = DEFAULT_CAPACITY, Rank size = 0, T element = (T)0)
+    Vector(const Rank capacity = DEFAULT_CAPACITY, Rank size = 0)
+        : capacity(capacity), size(size), element(new T[capacity]){};
+    Vector(T element = T(), const Rank capacity = DEFAULT_CAPACITY, Rank size = 0)
         : capacity(capacity), size(size), element(new T[capacity])
     {
         for (int i = 0; i < size; i++)
