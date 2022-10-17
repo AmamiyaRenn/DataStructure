@@ -7,6 +7,7 @@
 #include "Queue.h"
 #include "Queue_Circular.h"
 #include "BinTree.h"
+#include "BinSearchTree.h"
 #include "Graph.h"
 #include "GraphMatrix.h"
 

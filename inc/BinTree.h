@@ -31,6 +31,24 @@ struct BinNode
     }
     // 返回x的父亲指向x所用的指针
     BinNodePos<T> &ParentPtrToThis() { return parent != nullptr ? (parent->lChild == this ? parent->lChild : parent->rChild) : parent; }
+    // 返回这个节点的直接后继
+    BinNodePos<T> succ()
+    {
+        BinNodePos<T> s = this;
+        if (rChild) // 若有右孩子，则直接后继必在右子树中最靠左的节点
+        {
+            s = rChild;
+            while (s->lChild)
+                s = s->lChild;
+        }
+        else // 否则，直接后继应是“将当前节点包含于其左子树中的最低祖先”
+        {
+            while (s->parent && s == s->parent->rChild)
+                s = s->parent;
+            s = s->parent;
+        }
+        return s;
+    }
     // 将e作为当前节点的左孩子插入二叉树
     BinNodePos<T> insertAsLChild(const T &e) { return lChild = new BinNode<T>(e, this); }
     // 将e作为当前节点的右孩子插入二叉树
