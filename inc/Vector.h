@@ -33,7 +33,7 @@ public:
         copyFrom(v.element, 0, v.size);
         return *this;
     };
-    Rank getSize() const { return size; }
+    Rank Size() const { return size; }
     bool empty() const { return !size; }
     bool full() const { return size == capacity; }
     // 清空结构
