@@ -45,7 +45,7 @@ public:
     {
         for (Rank u = 0; u < this->n; u++) // 插入列
             E[u].insert(nullptr);
-        E.insert(Vector<Edge<Te> *>(nullptr, ++this->n)); // 插入行
+        E.insert(Vector<Edge<Te> *>(this->n, this->n, (Edge<Te> *)nullptr)); // 插入行
         return V.insert(Vertex<Tv>(vertex));
     }
     // 删除顶点及其关联边，返回该顶点信息

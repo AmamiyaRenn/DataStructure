@@ -109,7 +109,7 @@ public:
         Rank clock = 0, v = s;
         do
             if (status(v) == VStatus::Undiscovered)
-                DFS_CD(v, clock);
+                DFS_CD(v, clock, visit);
         while (s != (v = (++v % n)));
     }
     /**
@@ -269,7 +269,7 @@ private:
             case VStatus::Undiscovered:
                 type(v, u) = EType::Tree;
                 parent(u) = v;
-                DFS_CD(u, clock);
+                DFS_CD(u, clock, visit);
                 break;
 
             case VStatus::Discoverd:

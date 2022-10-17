@@ -8,7 +8,12 @@ template <typename T>
 class Vector
 {
 public:
-    Vector(const Rank capacity = DEFAULT_CAPACITY) : capacity(capacity), size(capacity), element(new T[capacity]){};
+    Vector(const Rank capacity = DEFAULT_CAPACITY, Rank size = 0, T element = 0)
+        : capacity(capacity), size(size), element(new T[capacity])
+    {
+        for (int i = 0; i < size; i++)
+            this->element[i] = element;
+    };
     Vector(const T *element, Rank size) { copyFrom(element, 0, size); }
     Vector(const T *element, Rank low, Rank high) { copyFrom(element, low, high); }
     Vector(const Vector<T> &v) { copyFrom(v.element, 0, v.size); }
