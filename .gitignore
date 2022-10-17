@@ -1,4 +1,6 @@
 ﻿Backup
 build
 .vscode
+.vs
+out
 src

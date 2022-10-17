@@ -235,7 +235,7 @@ private:
         {
             Rank v = Q.dequeue();
             for (Rank u = firstNbr(v); - 1 < u; u = nextNbr(v, u))
-                switch (status(v))
+                switch (status(u))
                 {
                 case VStatus::Undiscovered:
                     status(u) = VStatus::Discoverd;

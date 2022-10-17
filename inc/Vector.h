@@ -8,18 +8,18 @@ template <typename T>
 class Vector
 {
 public:
-    Vector(const Rank capacity = DEFAULT_CAPACITY, Rank size = 0)
+    Vector(Rank capacity = DEFAULT_CAPACITY, Rank size = 0)
         : capacity(capacity), size(size), element(new T[capacity]){};
-    Vector(T element = T(), const Rank capacity = DEFAULT_CAPACITY, Rank size = 0)
+    Vector(T element, Rank capacity, Rank size)
         : capacity(capacity), size(size), element(new T[capacity])
     {
-        for (int i = 0; i < size; i++)
+        for (Rank i = 0; i < size; i++)
             this->element[i] = element;
     };
-    Vector(const T *element, Rank size) { copyFrom(element, 0, size); }
-    Vector(const T *element, Rank low, Rank high) { copyFrom(element, low, high); }
-    Vector(const Vector<T> &v) { copyFrom(v.element, 0, v.size); }
-    Vector(const Vector<T> &v, Rank low, Rank high) { copyFrom(v.element, low, high); }
+    Vector(const T *A, Rank size) { copyFrom(A, 0, size); }
+    Vector(const T *A, Rank low, Rank high) { copyFrom(A, low, high); }
+    Vector(const Vector<T> &V) { copyFrom(V.element, 0, V.size); }
+    Vector(const Vector<T> &V, Rank low, Rank high) { copyFrom(V.element, low, high); }
     ~Vector() { delete[] element; }
     // 重载[]，左值版
     T &operator[](Rank r) { return element[r]; }
