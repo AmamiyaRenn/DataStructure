@@ -98,7 +98,7 @@ public:
         Rank clock = 0, v = s;
         do
             if (status(v) == VStatus::Undiscovered)
-                BFS_CD(v, clock);
+                BFS_CD(v, clock, visit);
         while (s != (v = (++v % n)));
     }
     // 多连通域DFS
@@ -145,7 +145,8 @@ public:
         } while (s != (v = (++v % n)));
     }
     // 最短路径Dijkstra算法
-    void dijkstra(Rank s)
+    template <typename VST>
+    void dijkstra(Rank s, VST &visit)
     {
         struct dijkstraPrioUpdater
         {
@@ -162,10 +163,11 @@ public:
                 }
             }
         } prioUpdater;
-        pfs(s, prioUpdater, print<Rank>());
+        pfs(s, prioUpdater, visit);
     }
     // 最小支撑树Prim算法
-    void prim(Rank s)
+    template <typename VST>
+    void prim(Rank s, VST &visit)
     {
         struct dijkstraPrioUpdater
         {
@@ -182,7 +184,7 @@ public:
                 }
             }
         } prioUpdater;
-        pfs(s, prioUpdater, print<Rank>());
+        pfs(s, prioUpdater, visit);
     }
     template <typename PrioUpdater, typename VST>
     /**

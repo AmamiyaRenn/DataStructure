@@ -11,7 +11,7 @@ const Rank DEFAULT_CAPACITY = 16;
 #define STACK_VECTOR
 
 template <typename T>
-struct print
+struct Print
 {
     void operator()(T &e) { std::cout << e << " "; }
 };
