@@ -8,7 +8,7 @@ template <typename T>
 class Vector
 {
 public:
-    Vector(const Rank capacity = DEFAULT_CAPACITY, Rank size = 0, T element = 0)
+    Vector(const Rank capacity = DEFAULT_CAPACITY, Rank size = 0, T element = (T)0)
         : capacity(capacity), size(size), element(new T[capacity])
     {
         for (int i = 0; i < size; i++)
@@ -93,6 +93,7 @@ public:
         for (Rank i = 0; i < size; i++)
             opt(element[i]);
     }
+    // 对区间[low, high)进行二分查找
     Rank binSearch(const T &e, Rank low, Rank high)
     {
         while (low < high)
@@ -102,6 +103,7 @@ public:
         }
         return low - 1;
     };
+    // 对区间[low, high)进行斐波那契查找
     Rank fibSearch(const T &e, Rank low, Rank high)
     {
         for (Fibonacci fib(high - low); low < high;)
@@ -113,7 +115,7 @@ public:
         }
         return --low; // 循环结束时，low为大于e的最小秩，所以要--
     }
-    // 冒泡排序，逆序对改进版
+    // 对区间[low, high)进行冒泡排序，逆序对改进版
     void bubbleSort(Rank low, Rank high)
     {
         for (Rank last = low; low < high; high = last)
@@ -121,7 +123,9 @@ public:
                 if (element[i - 1] > element[i])
                     swap(element[i - 1], element[last = i]);
     }
-    // 归并排序
+    // 对全向量进行冒泡排序
+    void bubbleSort() { bubbleSort(0, size); }
+    // 对区间[low, high)进行归并排序
     void mergeSort(Rank low, Rank high)
     {
         if (high - low < 2)
@@ -131,6 +135,8 @@ public:
         mergeSort(middle, high);
         merge(low, middle, high);
     }
+    // 对全向量进行归并排序
+    void mergeSort() { mergeSort(0, size); }
     friend Rank match(Vector<T> Pattern, Vector<T> Text)
     {
         Rank n = Text.size, m = Pattern.size, i = 0, j = 0;
@@ -167,6 +173,7 @@ private:
             element[i] = oldElement[i];
         delete[] oldElement;
     }
+    // 空间缩容
     void shrink()
     {
         if (capacity < DEFAULT_CAPACITY << 1 || size << 2 > capacity)

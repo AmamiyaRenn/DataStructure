@@ -222,6 +222,8 @@ public:
             sectionTail = sectionTail->prev;
         }
     }
+    // 对全列表进行选择排序
+    void selectionSort() { selectionSort(first(), size); }
     //对列表中起始于位置p、宽度为n的区间做插入排序
     void insertionSort(ListNodePos<T> p, Rank n)
     {
@@ -231,6 +233,8 @@ public:
             remove((p = p->next)->prev);
         }
     }
+    // 对全列表进行插入排序
+    void insertionSort() { insertionSort(first(), size); }
     // p后n个元素内找到最大的元素返回其位置
     ListNodePos<T> selectMax(ListNodePos<T> p, Rank n)
     {
