@@ -6,9 +6,9 @@ template <typename T>
 class Stack : List<T>
 {
 public:
-    using List::empty;
-    using List::List;
-    using List::Size;
+    using List<T>::empty;
+    using List<T>::List;
+    using List<T>::Size;
     void push(const T &element) { this->insertAsLast(element); }
     T pop() { return this->remove(this->last()); }
     T &top() { return this->last()->element; }
