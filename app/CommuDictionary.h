@@ -47,16 +47,6 @@ public:
         for (int i = 0; i < sceneNum; i++)
             Dictionary[i].selectionSort();
     }
-    // 对整个词典进行遍历
-    template <typename VST>
-    void traverse(VST &visit)
-    {
-        for (int i = 0; i < sceneNum; i++)
-            Dictionary[i].travForward(visit);
-    }
-    // 对整个词典中给定的scene进行遍历
-    template <typename VST>
-    void traverse(VST &visit, SceneID sceneID) { Dictionary[(int)sceneID].travForward(visit); }
     /**
      * @brief 从buffer+offset处开始对指定场景编码
      * @return size_t 返回offset+场景编码数据量

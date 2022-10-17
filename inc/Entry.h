@@ -2,8 +2,8 @@
 
 /**
  * @brief 词条模板类
- * @tparam K 关键码
- * @tparam V 数值
+ * @tparam KET 关键码
+ * @tparam VALUE 数值
  */
 template <typename KEY, typename VALUE>
 struct Entry
