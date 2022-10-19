@@ -42,7 +42,7 @@ public:
     template<typename E>
     void addEntry(SceneID sceneID, CommuID ID, E& entry)
     {
-        dictionary[(int)sceneID].insertAsLast(Entry<CommuID, CommuEntryValue>(ID, CommuEntryValue(&entry, sizeof(E))));
+        dictionary[static_cast<int>(sceneID)].insertAsLast(Entry<CommuID, CommuEntryValue>(ID, CommuEntryValue(&entry, sizeof(E))));
     }
     // 词典有序化（添加完词条后需要有序化，才能让解码成功）
     void ordering()
@@ -74,7 +74,7 @@ public:
             }
         };
         EncodeBuffer encode_buffer(buffer, offset);
-        dictionary[(int)sceneID].travForward(encode_buffer);
+        dictionary[static_cast<int>(sceneID)].travForward(encode_buffer);
         memset(buffer + offset, 255, 2); // 包尾标识符
         return offset + 2;
     }
@@ -85,12 +85,12 @@ public:
     size_t decode(SceneID sceneID, char* buffer, size_t offset = 0)
     {
         Entry<CommuID, CommuEntryValue>              entry;
-        ListNodePos<Entry<CommuID, CommuEntryValue>> entry_pos = dictionary[(int)sceneID].first();
+        ListNodePos<Entry<CommuID, CommuEntryValue>> entry_pos = dictionary[static_cast<int>(sceneID)].first();
         while (true)
         {
             memcpy(&entry.key, buffer + offset++, 1);
             memcpy(&entry.value.size, buffer + offset++, 1);
-            if ((int)entry.key == 255 && entry.value.size == 255) // 到最后了
+            if (static_cast<int>(entry.key) == 255 && entry.value.size == 255) // 到最后了
                 return offset;
             while (true)
             {
@@ -102,7 +102,7 @@ public:
                 }
                 else if (entry_pos->element < entry)
                 {
-                    if (entry_pos == dictionary[(int)sceneID].last())
+                    if (entry_pos == dictionary[static_cast<int>(sceneID)].last())
                         break;
                     entry_pos = entry_pos->next;
                 }

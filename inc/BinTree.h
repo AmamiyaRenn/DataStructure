@@ -189,7 +189,7 @@ public:
     // 删除二叉树中位置x处的节点及其后代，返回被删除节点的个数
     Rank remove(BinNodePos<T> x)
     {
-        x->ParentPtrToThis() = nullptr;
+        x->parentPtrToThis() = nullptr;
         updateHeightAbove(x->parent);
         Rank n = removeAt(x);
         size -= n;
@@ -220,7 +220,7 @@ public:
     // 子树分离：将子树x从当前树中摘除，将其封装为一棵独立子树返回
     BinTree<T> detach(BinNodePos<T> x)
     {
-        x->ParentPtrToThis() = nullptr;
+        x->parentPtrToThis() = nullptr;
         updateHeightAbove(x->parent);
         x->parent            = nullptr;
         BinTree<T>* new_tree = new BinTree<T>(x->size(), x);
