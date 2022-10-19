@@ -21,7 +21,7 @@ public:
         for (hot = this->root;;)
         {
             BinNodePos<T> &v = (e < hot->data) ? hot->lChild : hot->rChild;
-            if (e == v->data || !v) // 一旦命中或抵达叶子，随即返回
+            if (!v || e == v->data) // 一旦抵达叶子或命中，随即返回
                 return v;
             hot = v;
         }
@@ -34,7 +34,7 @@ public:
             return x;
         x = new BinNode<T>(e, hot);
         this->size++;
-        updateHeightAbove(x);
+        this->updateHeightAbove(x);
         return x;
     }
     // 删除
@@ -45,7 +45,7 @@ public:
             return nullptr;
         removeAt(x, hot);
         this->size--;
-        updateHeightAbove(x);
+        this->updateHeightAbove(x);
         return x;
     }
 
@@ -75,5 +75,6 @@ protected:
         if (succ)
             succ->parent = hot;
         delete w;
+        return x;
     }
 };

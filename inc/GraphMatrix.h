@@ -43,8 +43,9 @@ public:
     // 插入顶点，返回编号
     virtual Rank insert(const Tv &vertex)
     {
-        E.insert(Vector<Edge<Te> *>((Edge<Te> *)nullptr, ++this->n, this->n)); // 插入行
-        for (Rank u = 0; u < this->n; u++)                                     // 插入列
+        this->n++;
+        E.insert(Vector<Edge<Te> *>((Edge<Te> *)nullptr, this->n, this->n)); // 插入行
+        for (Rank u = 0; u < this->n; u++)                                   // 插入列
             E[u].insert(nullptr);
         return V.insert(Vertex<Tv>(vertex));
     }

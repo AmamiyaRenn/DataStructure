@@ -18,7 +18,7 @@ struct BinNode
     BinNode(){};
     BinNode(T data, BinNodePos<T> parent = nullptr, BinNodePos<T> lChild = nullptr, BinNodePos<T> rChild = nullptr, Rank height = 0)
         : data(data), parent(parent), lChild(lChild), rChild(rChild), height(0){};
-    Rank stature() const { return this == nullptr ? -1 : height; }
+    friend Rank stature(BinNodePos<T> x) { return x == nullptr ? -1 : x->height; }
     // 统计当前节点后代总数，亦即以其为根的子树的规模
     Rank size()
     {
@@ -100,14 +100,14 @@ struct BinNode
             if (S.top() != x->parent) // 若栈顶非x之父（而为右兄）
             {                         // 在以S栈顶节点为根的子树中，找到最高左侧可见叶节点
                 while (BinNodePos<T> p = S.top())
-                    if (p->lChild)
+                    if (p->lChild) // 有左孩子，就深入左边
                     {
                         if (p->rChild)
                             S.push(p->rChild);
                         S.push(p->lChild);
                     }
-                    else
-                        S.push(p->lChild);
+                    else // 实在没办法，就向右找
+                        S.push(p->rChild);
                 S.pop();
             }
             visit((x = S.pop())->data);
@@ -189,7 +189,7 @@ public:
     // 左子树接入：S当作节点x的左子树接入二叉树，S本身置空，返回x
     BinNodePos<T> attach(BinTree<T> *&S, BinNodePos<T> x)
     {
-        if (x->lChild = S->root)
+        if ((x->lChild = S->root))
             x->lChild->parent = x;
         size += S->size;
         updateHeightAbove(x);
@@ -200,7 +200,7 @@ public:
     // 右子树接入：S当作节点x的右子树接入二叉树，S本身置空，返回x
     BinNodePos<T> attach(BinNodePos<T> x, BinTree<T> *&S)
     {
-        if (x->rChild = S->root)
+        if ((x->rChild = S->root))
             x->rChild->parent = x;
         size += S->size;
         updateHeightAbove(x);
@@ -251,7 +251,7 @@ protected:
     Rank size;
     BinNodePos<T> root;
     // 更新x节点高度
-    Rank updateHeight(BinNodePos<T> x) { return x->height = 1 + std::max(x->lChild->stature(), x->rChild->stature()); }
+    Rank updateHeight(BinNodePos<T> x) { return x->height = 1 + std::max(stature(x->lChild), stature(x->rChild)); }
     // 更新x节点及其所有祖先高度
     void updateHeightAbove(BinNodePos<T> x)
     {
