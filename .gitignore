@@ -1,6 +1,7 @@
-﻿Backup
-build
+﻿.cache
 .vscode
+build
 .vs
 out
+Backup
 main.cpp

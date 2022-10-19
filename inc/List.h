@@ -2,55 +2,56 @@
 
 #include "Macro.h"
 
-template <typename T>
+template<typename T>
 struct ListNode;
 
-template <typename T>
-using ListNodePos = ListNode<T> *;
+template<typename T>
+using ListNodePos = ListNode<T>*;
 
-template <typename T>
+template<typename T>
 struct ListNode
 {
-    T element;
+    T              element;
     ListNodePos<T> prev, next;
-    ListNode(T element = T(), ListNodePos<T> prev = nullptr, ListNodePos<T> next = nullptr) : element(element), prev(prev), next(next){};
+    explicit ListNode(T element = T(), ListNodePos<T> prev = nullptr, ListNodePos<T> next = nullptr) :
+        element(element), prev(prev), next(next) {};
     /**
      * @brief 作为当前节点的前一个节点插入
      * @return ListNodePos<T> 新节点位置
      */
-    ListNodePos<T> insertAsPrev(const T &element)
+    ListNodePos<T> insertAsPrev(const T& element)
     {
-        ListNodePos<T> newNode = new ListNode<T>(element, prev, this);
-        prev->next = newNode;
-        prev = newNode;
-        return newNode;
+        ListNodePos<T> new_node = new ListNode<T>(element, prev, this);
+        prev->next              = new_node;
+        prev                    = new_node;
+        return new_node;
     }
     /**
      * @brief 作为当前节点的后一个节点插入
      * @return ListNodePos<T> 新节点位置
      */
-    ListNodePos<T> insertAsNext(const T &element)
+    ListNodePos<T> insertAsNext(const T& element)
     {
-        ListNodePos<T> newNode = new ListNode<T>(element, this, next);
-        next->prev = newNode;
-        next = newNode;
-        return newNode;
+        ListNodePos<T> new_node = new ListNode<T>(element, this, next);
+        next->prev              = new_node;
+        next                    = new_node;
+        return new_node;
     }
 };
 
-template <typename T>
+template<typename T>
 class List
 {
 public:
     List() { init(); }
     // 把L整个复制过来
-    List(const List<T> &L)
+    List(const List<T>& L)
     {
         init();
-        copyNodes(L.first(), L.getSize());
+        copyNodes(L.first(), L.size);
     }
     // 复制L中自第r项起的n项
-    List(const List<T> &L, Rank r, int n)
+    List(const List<T>& L, Rank r, int n)
     {
         init();
         ListNodePos<T> p = L.first();
@@ -59,14 +60,14 @@ public:
         copyNodes(p, n);
     }
     ~List() { clear(), delete head, delete tail; }
-    T &operator[](Rank r)
+    T& operator[](Rank r)
     {
         ListNodePos<T> p = first();
         while (0 < r--)
             p = p->next;
         return p->element;
     }
-    T &operator[](Rank r) const
+    T& operator[](Rank r) const
     {
         ListNodePos<T> p = first();
         while (0 < r--)
@@ -74,11 +75,11 @@ public:
         return p->element;
     }
     // 正向遍历
-    template <typename VST>
-    void travForward(VST &visit)
+    template<typename VST>
+    void travForward(VST& visit)
     {
         ListNodePos<T> p = first();
-        Rank n = Size();
+        Rank           n = size;
         while (0 < n--)
         {
             visit(p->element);
@@ -86,11 +87,11 @@ public:
         }
     }
     // 反向遍历
-    template <typename VST>
-    void travBackward(VST &visit)
+    template<typename VST>
+    void travBackward(VST& visit)
     {
         ListNodePos<T> p = last();
-        Rank n = Size();
+        Rank           n = size;
         while (0 < n--)
         {
             visit(p->element);
@@ -101,10 +102,10 @@ public:
     ListNodePos<T> first() const { return head->next; }
     // 尾节点位置
     ListNodePos<T> last() const { return tail->prev; }
-    Rank Size() const { return size; }
-    bool empty() const { return !size; }
+    Rank           getSize() const { return size; }
+    bool           empty() const { return !size; }
     // 在无序列表内的节点p的n个真前驱中找第一个找到的e的位置
-    ListNodePos<T> find(const T &e, Rank n, ListNodePos<T> p) const
+    ListNodePos<T> find(const T& e, Rank n, ListNodePos<T> p) const
     {
         while (0 < n--)
             if (e == (p = p->prev)->element)
@@ -112,9 +113,9 @@ public:
         return nullptr;
     }
     // 在无序列表中找e
-    ListNodePos<T> find(const T &e) const { return find(e, size, tail); }
+    ListNodePos<T> find(const T& e) const { return find(e, size, tail); }
     // 在有序列表内的节点p的n个真前驱中找不大于e的最后者
-    ListNodePos<T> search(const T &e, Rank n, ListNodePos<T> p) const
+    ListNodePos<T> search(const T& e, Rank n, ListNodePos<T> p) const
     {
         do
         {
@@ -127,7 +128,7 @@ public:
      * @brief 在p前插入e
      * @return ListNodePos<T> e的位置
      */
-    ListNodePos<T> insert(const T &e, ListNodePos<T> p)
+    ListNodePos<T> insert(const T& e, ListNodePos<T> p)
     {
         size++;
         return p->insertAsPrev(e);
@@ -136,7 +137,7 @@ public:
      * @brief 在p后插入e
      * @return ListNodePos<T> e的位置
      */
-    ListNodePos<T> insert(ListNodePos<T> p, const T &e)
+    ListNodePos<T> insert(ListNodePos<T> p, const T& e)
     {
         size++;
         return p->insertAsNext(e);
@@ -145,12 +146,12 @@ public:
      * @brief 将e作为首节点插入
      * @return ListNodePos<T> e的位置
      */
-    ListNodePos<T> insertAsFirst(const T &e) { return insert(head, e); }
+    ListNodePos<T> insertAsFirst(const T& e) { return insert(head, e); }
     /**
      * @brief 将e作为尾节点插入
      * @return ListNodePos<T> e的位置
      */
-    ListNodePos<T> insertAsLast(const T &e) { return insert(e, tail); }
+    ListNodePos<T> insertAsLast(const T& e) { return insert(e, tail); }
     /**
      * @brief 删除p处元素
      * @return T p的数据
@@ -158,7 +159,7 @@ public:
     T remove(ListNodePos<T> p)
     {
         size--;
-        T copy = p->element;
+        T copy        = p->element;
         p->prev->next = p->next;
         p->next->prev = p->prev;
         delete p;
@@ -170,10 +171,10 @@ public:
      */
     Rank clear()
     {
-        Rank oldSize = size;
+        Rank old_size = size;
         while (size)
             remove(head->next);
-        return oldSize;
+        return old_size;
     }
     /**
      * @brief 无序列表去重
@@ -183,14 +184,14 @@ public:
     {
         if (size < 2)
             return 0;
-        ListNodePos<T> p = first()->next;
-        Rank oldSize = size;
+        ListNodePos<T> p        = first()->next;
+        Rank           old_size = size;
         for (Rank r = 1; p != tail; p = p->next)
             if (ListNodePos<T> q = find(p->element, r, p))
                 remove(q);
             else
                 r++;
-        return oldSize - size;
+        return old_size - size;
     }
     /**
      * @brief 有序列表去重
@@ -200,25 +201,25 @@ public:
     {
         if (size < 2)
             return 0;
-        ListNodePos<T> p = first()->next, q;
-        Rank oldSize = size;
+        ListNodePos<T> p        = first()->next, q;
+        Rank           old_size = size;
         while ((q = p->next) != tail)
             if (p->element == q->element)
                 remove(q);
             else
                 p = q;
-        return oldSize - size;
+        return old_size - size;
     }
     // 对起始于p后的n个元素进行选择排序
     void selectionSort(ListNodePos<T> p, Rank n)
     {
-        ListNodePos<T> sectionHead = p->prev, sectionTail = p;
+        ListNodePos<T> section_head = p->prev, section_tail = p;
         for (int i = 0; i < n; i++)
-            sectionTail = sectionTail->next;
+            section_tail = section_tail->next;
         for (; 1 < n; n--)
         {
-            insert(remove(selectMax(sectionHead->next, n)), sectionTail);
-            sectionTail = sectionTail->prev;
+            insert(remove(selectMax(section_head->next, n)), section_tail);
+            section_tail = section_tail->prev;
         }
     }
     // 对全列表进行选择排序
@@ -254,7 +255,7 @@ public:
     }
 
 protected:
-    Rank size;
+    Rank           size;
     ListNodePos<T> head, tail;
 
 private:
