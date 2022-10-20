@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 #include "Macro.h"
+#include "Queue.h"
 #include "Stack.h"
-#include "inc/Queue.h"
 
 // vertext status
 enum class VStatus

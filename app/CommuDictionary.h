@@ -39,10 +39,11 @@ public:
         dictionary(Vector<List<Entry<CommuID, CommuEntryValue>>>(sceneNum, sceneNum)), scene_num(sceneNum) {};
     int sceneNum() const { return scene_num; }
     // 添加词条
-    template<typename E>
-    void addEntry(SceneID sceneID, CommuID ID, E& entry)
+    template<typename ENTRY>
+    void addEntry(SceneID sceneID, CommuID ID, ENTRY& entry)
     {
-        dictionary[static_cast<int>(sceneID)].insertAsLast(Entry<CommuID, CommuEntryValue>(ID, CommuEntryValue(&entry, sizeof(E))));
+        dictionary[static_cast<int>(sceneID)].insertAsLast(
+            Entry<CommuID, CommuEntryValue>(ID, CommuEntryValue(&entry, sizeof(ENTRY))));
     }
     // 词典有序化（添加完词条后需要有序化，才能让解码成功）
     void ordering()

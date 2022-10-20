@@ -1,6 +1,7 @@
 #ifndef _STRUCTURE_H
 #define _STRUCTURE_H
 
+#include "AVLTree.h"
 #include "BinSearchTree.h"
 #include "BinTree.h"
 #include "Graph.h"

@@ -78,4 +78,69 @@ protected:
         delete w;
         return x;
     }
+    /**
+     * @brief 节点旋转变换
+     * @param v 非空孙辈节点
+     * @return BinNodePos<T> 调整之后局部节点位置
+     */
+    BinNodePos<T> rotateAt(BinNodePos<T> v)
+    {
+        BinNodePos<T> p = v->parent; // parent
+        BinNodePos<T> g = p->parent; // grandparent
+        if (p->isLChild())           // zig
+            if (v->isLChild())       // zig
+            {                        // zig-zig
+                p->parent = g->parent;
+                return connect34(v, p, g, v->l_child, v->r_child, p->r_child, g->r_child);
+            }
+            else // zag
+            {    // zig-zag
+                v->parent = g->parent;
+                return connect34(p, v, g, p->l_child, v->l_child, v->r_child, g->r_child);
+            }
+        else                   // zag
+            if (v->isLChild()) // zig
+            {                  // zag-zig
+                v->parent = g->parent;
+                return connect34(g, v, p, g->l_child, v->l_child, v->r_child, p->r_child);
+            }
+            else // zag
+            {    // zag-zag
+                p->parent = g->parent;
+                return connect34(g, p, v, g->l_child, p->l_child, v->l_child, v->r_child);
+            }
+    }
+    /**
+     * @brief 根据“3+4”结构连接三个节点与四棵子树
+     * @return BinNodePos<T> 重构后局部子树根节点位置(b)
+     */
+    BinNodePos<T> connect34(BinNodePos<T> a,
+                            BinNodePos<T> b,
+                            BinNodePos<T> c,
+                            BinNodePos<T> T0,
+                            BinNodePos<T> T1,
+                            BinNodePos<T> T2,
+                            BinNodePos<T> T3)
+    {
+        a->l_child = T0;
+        if (T0)
+            T0->parent = a;
+        a->r_child = T1;
+        if (T1)
+            T1->parent = a;
+        this->updateHeight(a);
+        c->l_child = T2;
+        if (T2)
+            T2->parent = c;
+        c->r_child = T3;
+        if (T3)
+            T3->parent = c;
+        this->updateHeight(c);
+        b->l_child = a;
+        a->parent  = b;
+        b->r_child = c;
+        c->parent  = b;
+        this->updateHeight(b);
+        return b;
+    }
 };

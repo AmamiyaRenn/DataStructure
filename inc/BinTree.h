@@ -3,6 +3,7 @@
 #include "Macro.h"
 #include "Queue.h"
 #include "Stack.h"
+#include <sys/types.h>
 
 template<typename T>
 struct BinNode;
@@ -35,11 +36,9 @@ struct BinNode
             s += r_child->size();
         return s;
     }
-    // 返回x的父亲指向x所用的指针
-    BinNodePos<T>& parentPtrToThis()
-    {
-        return parent != nullptr ? (parent->l_child == this ? parent->l_child : parent->r_child) : parent;
-    }
+    bool isRoot() { return !parent; }
+    bool isLChild() { return !isRoot() && (this == parent->l_child); }
+    bool isRChild() { return !isRoot() && (this == parent->r_child); }
     // 返回这个节点的直接后继
     BinNodePos<T> succ()
     {
@@ -189,7 +188,7 @@ public:
     // 删除二叉树中位置x处的节点及其后代，返回被删除节点的个数
     Rank remove(BinNodePos<T> x)
     {
-        x->parentPtrToThis() = nullptr;
+        parentPtrTo(x) = nullptr;
         updateHeightAbove(x->parent);
         Rank n = removeAt(x);
         size -= n;
@@ -220,7 +219,7 @@ public:
     // 子树分离：将子树x从当前树中摘除，将其封装为一棵独立子树返回
     BinTree<T> detach(BinNodePos<T> x)
     {
-        x->parentPtrToThis() = nullptr;
+        parentPtrTo(x) = nullptr;
         updateHeightAbove(x->parent);
         x->parent            = nullptr;
         BinTree<T>* new_tree = new BinTree<T>(x->size(), x);
@@ -259,6 +258,11 @@ public:
 protected:
     Rank          size;
     BinNodePos<T> root;
+    // 返回x的父亲指向x所用的指针
+    BinNodePos<T>& parentPtrTo(BinNodePos<T> x)
+    {
+        return x->isRoot() ? root : (x->isLChild() ? x->parent->l_child : x->parent->r_child);
+    }
     // 更新x节点高度
     Rank updateHeight(BinNodePos<T> x) { return x->height = 1 + std::max(stature(x->l_child), stature(x->r_child)); }
     // 更新x节点及其所有祖先高度
