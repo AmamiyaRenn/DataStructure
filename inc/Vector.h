@@ -1,45 +1,43 @@
 ﻿#ifndef _VECTOR_H
 #define _VECTOR_H
 
-#include "Macro.h"
 #include "Fibonacci.h"
+#include "Macro.h"
 
-template <typename T>
+template<typename T>
 class Vector
 {
 public:
-    Vector(Rank capacity = DEFAULT_CAPACITY, Rank size = 0)
-        : capacity(capacity), size(size), element(new T[capacity]){};
-    Vector(T element, Rank capacity, Rank size)
-        : capacity(capacity), size(size), element(new T[capacity])
+    explicit Vector(Rank capacity = DEFAULT_CAPACITY, Rank _size = 0) :
+        capacity(capacity), size(_size), element(new T[capacity]) {};
+    Vector(T element, Rank capacity, Rank _size) : capacity(capacity), size(_size), element(new T[capacity])
     {
-        for (Rank i = 0; i < size; i++)
+        for (Rank i = 0; i < _size; i++)
             this->element[i] = element;
     };
-    Vector(const T *A, Rank size) { copyFrom(A, 0, size); }
-    Vector(const T *A, Rank low, Rank high) { copyFrom(A, low, high); }
-    Vector(const Vector<T> &V) { copyFrom(V.element, 0, V.size); }
-    Vector(const Vector<T> &V, Rank low, Rank high) { copyFrom(V.element, low, high); }
+    Vector(const T* A, Rank _size) { copyFrom(A, 0, _size); }
+    Vector(const T* A, Rank low, Rank high) { copyFrom(A, low, high); }
+    Vector(const Vector<T>& V) { copyFrom(V.element, 0, V.size); }
+    Vector(const Vector<T>& V, Rank low, Rank high) { copyFrom(V.element, low, high); }
     ~Vector() { delete[] element; }
     // 重载[]，左值版
-    T &operator[](Rank r) { return element[r]; }
+    T& operator[](Rank r) { return element[r]; }
     // 重载[]，右值版
-    T &operator[](Rank r) const { return element[r]; }
-    // 深复制
-    Vector<T> &operator=(const Vector<T> &v)
-    {
-        if (element)
-            delete[] element;
-        copyFrom(v.element, 0, v.size);
-        return *this;
-    };
-    Rank Size() const { return size; }
+    T& operator[](Rank r) const { return element[r]; }
+    // TODO:深复制
+    // Vector<T>& operator=(const Vector<T>& v)
+    // {
+    //     delete[] element;
+    //     copyFrom(v.element, 0, v.size);
+    //     return *this;
+    // };
+    Rank getSize() const { return size; }
     bool empty() const { return !size; }
     bool full() const { return size == capacity; }
     // 清空结构
     void clear() { size = capacity = 0, delete[] element, element = nullptr; }
     // 判断e是否在结构中
-    bool isInside(const T &e) const
+    bool isInside(const T& e) const
     {
         for (Rank i = 0; i < size; i++)
             if (e == element[i])
@@ -51,7 +49,7 @@ public:
      * @param r 指定秩
      * @param e 元素
      */
-    Rank insert(Rank r, const T &e)
+    Rank insert(Rank r, const T& e)
     {
         expand();
         for (Rank i = size; i > r; i--)
@@ -61,7 +59,7 @@ public:
         return r;
     }
     // 在末尾插入元素
-    Rank insert(const T &e) { return insert(size, e); }
+    Rank insert(const T& e) { return insert(size, e); }
     /**
      * @brief 删除[low, high)的元素
      * @param low 左闭
@@ -89,14 +87,14 @@ public:
         remove(r, r + 1);
         return e;
     }
-    template <class Opt>
-    void traverse(Opt &opt)
+    template<class Opt>
+    void traverse(Opt& opt)
     {
         for (Rank i = 0; i < size; i++)
             opt(element[i]);
     }
     // 对区间[low, high)进行二分查找
-    Rank binSearch(const T &e, Rank low, Rank high)
+    Rank binSearch(const T& e, Rank low, Rank high)
     {
         while (low < high)
         {
@@ -106,7 +104,7 @@ public:
         return low - 1;
     };
     // 对区间[low, high)进行斐波那契查找
-    Rank fibSearch(const T &e, Rank low, Rank high)
+    Rank fibSearch(const T& e, Rank low, Rank high)
     {
         for (Fibonacci fib(high - low); low < high;)
         {
@@ -138,7 +136,7 @@ public:
         merge(low, middle, high);
     }
     // 对全向量进行归并排序
-    void mergeSort() { mergeSort(0, size); }
+    void        mergeSort() { mergeSort(0, size); }
     friend Rank match(Vector<T> Pattern, Vector<T> Text)
     {
         Rank n = Text.size, m = Pattern.size, i = 0, j = 0;
@@ -153,10 +151,10 @@ public:
 protected:
     Rank capacity;
     Rank size;
-    T *element;
+    T*   element;
 
 private:
-    void copyFrom(const T *element, Rank low, Rank high)
+    void copyFrom(const T* element, Rank low, Rank high)
     {
         this->element = new T[capacity = std::max(DEFAULT_CAPACITY, 2 * (high - low))];
         for (size = 0; low < high; size++, low++)
@@ -169,39 +167,39 @@ private:
             return;
         if (capacity < DEFAULT_CAPACITY)
             capacity = DEFAULT_CAPACITY;
-        T *oldElement = element;
-        element = new T[capacity <<= 1];
+        T* old_element = element;
+        element        = new T[capacity <<= 1];
         for (Rank i = 0; i < size; i++)
-            element[i] = oldElement[i];
-        delete[] oldElement;
+            element[i] = old_element[i];
+        delete[] old_element;
     }
     // 空间缩容
     void shrink()
     {
         if (capacity < DEFAULT_CAPACITY << 1 || size << 2 > capacity)
             return;
-        T *oldElement = element;
-        element = new T[capacity >>= 1];
+        T* old_element = element;
+        element        = new T[capacity >>= 1];
         for (Rank i = 0; i < size; i++)
-            element[i] = oldElement[i];
-        delete[] oldElement;
+            element[i] = old_element[i];
+        delete[] old_element;
     }
     // mergeSort中的合并操作
     void merge(Rank low, Rank middle, Rank high)
     {
         Rank a = 0, b = 0, c = 0;
-        T *A = element + low; // [low, high)
-        Rank BLength = middle - low;
-        T *B = new T[BLength]; // [low, middle)
-        for (Rank i = 0; i < BLength; i++)
-            B[i] = A[i];
-        Rank CLength = high - middle;
-        T *C = element + middle; // [middle, high)
-        while ((b < BLength) && (c < CLength))
-            A[a++] = (B[b] < C[c]) ? B[b++] : C[c++];
-        while (b < BLength)
-            A[a++] = B[b++];
-        delete[] B;
+        T*   a_array  = element + low; // [low, high)
+        Rank b_length = middle - low;
+        T*   b_array  = new T[b_length]; // [low, middle)
+        for (Rank i = 0; i < b_length; i++)
+            b_array[i] = a_array[i];
+        Rank c_length = high - middle;
+        T*   c_array  = element + middle; // [middle, high)
+        while ((b < b_length) && (c < c_length))
+            a_array[a++] = (b_array[b] < c_array[c]) ? b_array[b++] : c_array[c++];
+        while (b < b_length)
+            a_array[a++] = b_array[b++];
+        delete[] b_array;
     }
 };
 

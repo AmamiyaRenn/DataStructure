@@ -5,7 +5,7 @@
 class Fibonacci
 {
 public:
-    Fibonacci(Rank n) : f(1), g(0)
+    explicit Fibonacci(Rank n) : f(1), g(0)
     {
         while (g < n)
             next();

@@ -1,13 +1,13 @@
 ﻿#pragma once
 
-#include <string.h>
 #include "CommuDictionary.h"
+#include <string.h>
 
 // typedef char u8;
 //数据头 0xff,0xfe; id u8; 一字节检验和； 数据尾 '\n','\r'
 //原始数据增加了6个字节
 const static char head_char[2] = {0xff, 0xfe};
-const static char end_char[2] = {'\n', '\r'};
+const static char end_char[2]  = {'\n', '\r'};
 
 class DataProcess
 {
@@ -15,7 +15,7 @@ public:
     DataProcess()
     {
         get_head_id = get_head = get_end = false;
-        rec_len = 0;
+        rec_len                          = 0;
         rec_head_arr[0] = rec_head_arr[1] = ' ';
         rec_end_arr[0] = rec_end_arr[1] = ' ';
     };
@@ -28,12 +28,12 @@ public:
             if (rec_head_arr[0] == head_char[0] && rec_head_arr[1] == head_char[1])
             {
                 get_head = true;
-                rec_len = 0;
+                rec_len  = 0;
             }
         }
         else if (!get_head_id)
         {
-            head_id = _ch;
+            head_id     = _ch;
             get_head_id = true;
         }
         else
@@ -47,27 +47,27 @@ public:
         rec_head_arr[0] = rec_head_arr[1] = ' ';
         rec_end_arr[0] = rec_end_arr[1] = ' ';
         get_head_id = get_head = get_end = false;
-        rec_len = 0;
+        rec_len                          = 0;
     };
 
     char headId() { return head_id; };
 
-    template <typename T>
-    bool dataDecode(char _ch, T *stru);
+    template<typename T>
+    bool dataDecode(char _ch, T* stru);
 
-    template <typename T>
-    char *dataEncode(T *stru, char _head_id, int *_len);
+    template<typename T>
+    char* dataEncode(T* stru, char _head_id, int* _len);
 
 private:
     const static int ARRSIZE = 128;
-    bool get_head, get_end, get_head_id;
-    char rec_head_arr[2];
-    char rec_end_arr[2];
-    char rec_arr[ARRSIZE];
-    char send_arr[ARRSIZE];
-    int rec_len;
-    char head_id;
-    char checkSum(char *ch, int n)
+    bool             get_head, get_end, get_head_id;
+    char             rec_head_arr[2];
+    char             rec_end_arr[2];
+    char             rec_arr[ARRSIZE];
+    char             send_arr[ARRSIZE];
+    int              rec_len;
+    char             head_id;
+    char             checkSum(char* ch, int n)
     {
         char _sum = 0;
         for (int i = 0; i < n; i++)
@@ -76,8 +76,8 @@ private:
     };
 };
 
-template <typename T>
-bool DataProcess::dataDecode(char _ch, T *stru)
+template<typename T>
+bool DataProcess::dataDecode(char _ch, T* stru)
 {
     if (rec_len < sizeof(T) + sizeof(end_char) + 1) // 数据, 检验和 endchar
     {
@@ -94,21 +94,21 @@ bool DataProcess::dataDecode(char _ch, T *stru)
     if (get_end)
     {
         clearFlag();
-        memcpy((char *)stru, &rec_arr[0], sizeof(T));
+        memcpy((char*)stru, &rec_arr[0], sizeof(T));
         return (rec_arr[sizeof(T)] == checkSum(&rec_arr[0], sizeof(T)));
     }
     return false;
 }
 
-template <typename T>
-char *DataProcess::dataEncode(T *stru, char _head_id, int *_len)
+template<typename T>
+char* DataProcess::dataEncode(T* stru, char _head_id, int* _len)
 {
     for (int i = 0; i < sizeof(head_char); i++)
     {
         send_arr[i] = head_char[i];
     }
     send_arr[sizeof(head_char)] = _head_id;
-    memcpy(&send_arr[sizeof(head_char) + 1], (char *)stru, sizeof(T));
+    memcpy(&send_arr[sizeof(head_char) + 1], (char*)stru, sizeof(T));
     send_arr[sizeof(T) + sizeof(head_char) + 1] = checkSum(&send_arr[sizeof(head_char) + 1], sizeof(T));
     for (int i = 0; i <= sizeof(end_char); i++)
     {
