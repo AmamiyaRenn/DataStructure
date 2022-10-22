@@ -169,7 +169,7 @@ public:
     template <typename VST>
     void prim(Rank s, VST &visit)
     {
-        struct dijkstraPrioUpdater
+        struct primPrioUpdater
         {
             void operator()(Graph<Tv, Te> *G, Rank v, Rank u)
             {
