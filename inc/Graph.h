@@ -171,11 +171,7 @@ public:
     template<typename VST>
     void prim(Rank s, VST& visit)
     {
-<<<<<<< HEAD
         struct primPrioUpdater
-=======
-        struct DijkstraPrioUpdater
->>>>>>> 87ba61652999898e9dd612e9b115d47204de7e15
         {
             void operator()(Graph<Tv, Te>* G, Rank v, Rank u)
             {
