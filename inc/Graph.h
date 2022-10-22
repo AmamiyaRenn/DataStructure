@@ -171,7 +171,7 @@ public:
     template<typename VST>
     void prim(Rank s, VST& visit)
     {
-        struct primPrioUpdater
+        struct PrimPrioUpdater
         {
             void operator()(Graph<Tv, Te>* G, Rank v, Rank u)
             {
