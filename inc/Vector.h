@@ -8,14 +8,14 @@ template<typename T>
 class Vector
 {
 public:
-    explicit Vector(Rank capacity = DEFAULT_CAPACITY, Rank _size = 0) :
-        capacity(capacity), size(_size), element(new T[capacity]) {};
-    Vector(T element, Rank capacity, Rank _size) : capacity(capacity), size(_size), element(new T[capacity])
+    explicit Vector(Rank capacity = DEFAULT_CAPACITY, Rank size = 0) :
+        capacity(capacity), size(size), element(new T[capacity]) {};
+    Vector(Rank capacity, Rank size, T element) : capacity(capacity), size(size), element(new T[capacity])
     {
-        for (Rank i = 0; i < _size; i++)
+        for (Rank i = 0; i < size; i++)
             this->element[i] = element;
     };
-    Vector(const T* A, Rank _size) { copyFrom(A, 0, _size); }
+    Vector(const T* A, Rank size) { copyFrom(A, 0, size); }
     Vector(const T* A, Rank low, Rank high) { copyFrom(A, low, high); }
     Vector(const Vector<T>& V) { copyFrom(V.element, 0, V.size); }
     Vector(const Vector<T>& V, Rank low, Rank high) { copyFrom(V.element, low, high); }
@@ -24,13 +24,15 @@ public:
     T& operator[](Rank r) { return element[r]; }
     // 重载[]，右值版
     T& operator[](Rank r) const { return element[r]; }
-    // TODO:深复制
-    // Vector<T>& operator=(const Vector<T>& v)
-    // {
-    //     delete[] element;
-    //     copyFrom(v.element, 0, v.size);
-    //     return *this;
-    // };
+    // 深复制
+    Vector<T>& operator=(const Vector<T>& v)
+    {
+        if (this == &v)
+            return *this;
+        delete[] element;
+        copyFrom(v.element, 0, v.size);
+        return *this;
+    };
     Rank getSize() const { return size; }
     bool empty() const { return !size; }
     bool full() const { return size == capacity; }
