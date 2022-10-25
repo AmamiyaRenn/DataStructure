@@ -1,5 +1,6 @@
 ﻿.cache
-.vscode
+.vscode/*
+!.vscode/launch.json
 build
 .vs
 out
