@@ -52,29 +52,17 @@ public:
             dictionary[i].selectionSort();
     }
     /**
-     * @brief 从buffer+offset处开始对指定场景编码
+     * @brief 从buffer+offset处开始对指定场景编码，编码格式为小端法:(4B->1B)ID->(1B)size->((size)B)数据内容
      * @return size_t 返回offset+场景编码数据量
      */
     size_t encode(SceneID sceneID, char* buffer, size_t offset = 0)
     {
-        struct EncodeBuffer
-        {
-            char*   buffer;
-            size_t& offset;
-            EncodeBuffer(char* buffer, size_t& offset) : buffer(buffer), offset(offset) {};
-            /**
-             * @brief 把此词条编码入字节数组，编码格式为小端法:(4B->1B)ID->(1B)size->((size)B)数据内容
-             * @param entry 词条
-             */
-            void operator()(Entry<CommuID, CommuEntryValue> entry)
-            {
-                memcpy(buffer + offset++, &entry.key, 1);
-                memcpy(buffer + offset++, &entry.value.size, 1);
-                memcpy(buffer + offset, entry.value.address, entry.value.size);
-                offset += entry.value.size;
-            }
+        auto encode_buffer = [&offset, buffer](Entry<CommuID, CommuEntryValue> entry) {
+            memcpy(buffer + offset++, &entry.key, 1);
+            memcpy(buffer + offset++, &entry.value.size, 1);
+            memcpy(buffer + offset, entry.value.address, entry.value.size);
+            offset += entry.value.size;
         };
-        EncodeBuffer encode_buffer(buffer, offset);
         dictionary[static_cast<int>(sceneID)].travForward(encode_buffer);
         memset(buffer + offset, 255, 2); // 包尾标识符
         return offset + 2;
