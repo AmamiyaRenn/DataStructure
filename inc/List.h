@@ -86,18 +86,6 @@ public:
             p = p->next;
         }
     }
-    // 反向遍历
-    template<typename VST>
-    void travBackward(VST& visit)
-    {
-        ListNodePos<T> p = last();
-        Rank           n = size;
-        while (0 < n--)
-        {
-            visit(p->element);
-            p = p->prev;
-        }
-    }
     // 首节点位置
     ListNodePos<T> first() const { return head->next; }
     // 尾节点位置
@@ -180,36 +168,12 @@ public:
      * @brief 无序列表去重
      * @return Rank 被删除的元素个数
      */
-    Rank deduplicate()
-    {
-        if (size < 2)
-            return 0;
-        ListNodePos<T> p        = first()->next;
-        Rank           old_size = size;
-        for (Rank r = 1; p != tail; p = p->next)
-            if (ListNodePos<T> q = find(p->element, r, p))
-                remove(q);
-            else
-                r++;
-        return old_size - size;
-    }
+    Rank deduplicate();
     /**
      * @brief 有序列表去重
      * @return Rank 被删除的元素个数
      */
-    Rank uniquify()
-    {
-        if (size < 2)
-            return 0;
-        ListNodePos<T> p        = first()->next, q;
-        Rank           old_size = size;
-        while ((q = p->next) != tail)
-            if (p->element == q->element)
-                remove(q);
-            else
-                p = q;
-        return old_size - size;
-    }
+    Rank uniquify();
     // 对起始于p后的n个元素进行选择排序
     void selectionSort(ListNodePos<T> p, Rank n)
     {
@@ -244,15 +208,6 @@ public:
                 max = p;
         return max;
     }
-    // p后n个元素内找到最小的元素返回其位置
-    ListNodePos<T> selectMin(ListNodePos<T> p, Rank n)
-    {
-        ListNodePos<T> min = p;
-        for (; 1 < n; n--)
-            if (min->element >= (p = p->next)->element)
-                min = p;
-        return min;
-    }
 
 protected:
     Rank           size;
@@ -271,3 +226,33 @@ private:
             insertAsLast(p->element), p = p->next;
     }
 };
+
+template<typename T>
+Rank List<T>::deduplicate()
+{
+    if (size < 2)
+        return 0;
+    ListNodePos<T> p        = first()->next;
+    Rank           old_size = size;
+    for (Rank r = 1; p != tail; p = p->next)
+        if (ListNodePos<T> q = find(p->element, r, p))
+            remove(q);
+        else
+            r++;
+    return old_size - size;
+}
+
+template<typename T>
+Rank List<T>::uniquify()
+{
+    if (size < 2)
+        return 0;
+    ListNodePos<T> p        = first()->next, q;
+    Rank           old_size = size;
+    while ((q = p->next) != tail)
+        if (p->element == q->element)
+            remove(q);
+        else
+            p = q;
+    return old_size - size;
+}

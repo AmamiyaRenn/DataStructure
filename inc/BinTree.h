@@ -144,22 +144,7 @@ class BinTree
 public:
     explicit BinTree(Rank size = 0, BinNodePos<T> root = nullptr) : size(size), root(root) {};
     // 层次构造一个完全二叉树
-    BinTree(Rank n, T* a)
-    {
-        Queue<BinNodePos<T>> queue;
-        insert(a[0]);
-        queue.enqueue(root);
-        for (Rank i = 1; i < n - 1; i += 2)
-        {
-            BinNodePos<T> node = queue.dequeue();
-            insert(a[i], node);
-            queue.enqueue(node->l_child);
-            insert(node, a[i + 1]);
-            queue.enqueue(node->r_child);
-        }
-        if (size != n)
-            insert(a[n - 1], queue.dequeue());
-    }
+    BinTree(Rank n, T* a);
     ~BinTree() = default;
     Rank          getSize() const { return size; }
     BinNodePos<T> getRoot() const { return root; }
