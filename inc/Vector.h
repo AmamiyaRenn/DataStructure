@@ -38,14 +38,6 @@ public:
     bool full() const { return size == capacity; }
     // 清空结构
     void clear() { size = capacity = 0, delete[] element, element = nullptr; }
-    // 判断e是否在结构中
-    bool isInside(const T& e) const
-    {
-        for (Rank i = 0; i < size; i++)
-            if (e == element[i])
-                return true;
-        return false;
-    }
     /**
      * @brief 插入元素
      * @param r 指定秩
