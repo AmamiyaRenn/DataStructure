@@ -1,8 +1,6 @@
-﻿#ifndef _VECTOR_H
-#define _VECTOR_H
+﻿#pragma once
 
 #include "Fibonacci.h"
-#include "Macro.h"
 #include "inc/Macro.h"
 
 template<typename T>
@@ -78,7 +76,7 @@ public:
         return high;
     }
     // 无序向量中查找e的秩
-    Rank find(const T& e) const { find(e, 0, size); }
+    Rank find(const T& e) const { return find(e, 0, size); }
     // 对区间[low, high)进行冒泡排序，逆序对改进版
     void bubbleSort(Rank low, Rank high);
     // 对全向量进行冒泡排序
@@ -242,5 +240,3 @@ void Vector<T>::merge(Rank low, Rank middle, Rank high)
         a_array[a++] = b_array[b++];
     delete[] b_array;
 }
-
-#endif
