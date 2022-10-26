@@ -203,15 +203,15 @@ void Graph<Tv, Te>::bcc(Rank s)
 template<typename Tv, typename Te>
 template<typename VST>
 void Graph<Tv, Te>::dijkstra(Rank s, VST& visit)
-{
-    auto dijkstra_prio_updater = [](Graph<Tv, Te>* G, Rank v, Rank u) {
-        if (G->status(u) == VStatus::Undiscovered)
+{ // FIXME:改为了λ，未测试
+    auto dijkstra_prio_updater = [this](Rank v, Rank u) {
+        if (status(u) == VStatus::Undiscovered)
         {
-            Rank new_priority = G->priority(v) + G->weight(v, u);
-            if (new_priority < G->priority(u))
+            Rank new_priority = priority(v) + weight(v, u);
+            if (new_priority < priority(u))
             {
-                G->priority(u) = new_priority;
-                G->parent(u)   = v;
+                priority(u) = new_priority;
+                parent(u)   = v;
             }
         }
     };
@@ -222,14 +222,14 @@ template<typename Tv, typename Te>
 template<typename VST>
 void Graph<Tv, Te>::prim(Rank s, VST& visit)
 {
-    auto prim_prio_updater = [](Graph<Tv, Te>* G, Rank v, Rank u) {
-        if (G->status(u) == VStatus::Undiscovered)
+    auto prim_prio_updater = [this](Rank v, Rank u) {
+        if (status(u) == VStatus::Undiscovered)
         {
-            Rank new_priority = G->weight(v, u);
-            if (new_priority < G->priority(u))
+            Rank new_priority = weight(v, u);
+            if (new_priority < priority(u))
             {
-                G->priority(u) = new_priority;
-                G->parent(u)   = v;
+                priority(u) = new_priority;
+                parent(u)   = v;
             }
         }
     };
@@ -408,7 +408,7 @@ void Graph<Tv, Te>::pfsCD(Rank v, PrioUpdater prioUpdater, VST& visit)
     while (true)
     {
         for (Rank u = firstNbr(v); - 1 < u; u = nextNbr(v, u))
-            prioUpdater(this, v, u);
+            prioUpdater(v, u);
         for (Rank shortest = INT_MAX, u = 0; u < n; u++)
             if (status(u) == VStatus::Undiscovered)
                 if (shortest > priority(u))
