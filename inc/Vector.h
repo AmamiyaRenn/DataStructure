@@ -3,6 +3,7 @@
 
 #include "Fibonacci.h"
 #include "Macro.h"
+#include "inc/Macro.h"
 
 template<typename T>
 class Vector
@@ -63,12 +64,21 @@ public:
         for (Rank i = 0; i < size; i++)
             visit(element[i]);
     }
-    // 对区间[low, high)进行二分查找
+    // 有序向量对区间[low, high)进行二分查找
     Rank binSearch(const T& e, Rank low, Rank high);
-    // 对区间[low, high)进行斐波那契查找
+    // 有序向量对区间[low, high)进行斐波那契查找
     Rank fibSearch(const T& e, Rank low, Rank high);
     // 有序向量中查找e的秩，通过二分查找实现
-    Rank search(const T& e) const { return (size <= 0) ? -1 : binSearch(e, 0, size); }
+    Rank search(const T& e) { return (size <= 0) ? -1 : binSearch(e, 0, size); }
+    // 无序向量对区间[low, high)查找e的秩
+    Rank find(const T& e, Rank low, Rank high) const
+    {
+        while ((low < high--) && e != element[high])
+            ;
+        return high;
+    }
+    // 无序向量中查找e的秩
+    Rank find(const T& e) const { find(e, 0, size); }
     // 对区间[low, high)进行冒泡排序，逆序对改进版
     void bubbleSort(Rank low, Rank high);
     // 对全向量进行冒泡排序
