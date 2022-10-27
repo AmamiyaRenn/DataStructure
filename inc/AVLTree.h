@@ -69,7 +69,7 @@ bool AVLTree<T>::remove(const T& e)
     BinNodePos<T>& x = this->search(e);
     if (!x) // 如果已经存在e，则不需要插入
         return false;
-    this->removeAt(x, this->hot);
+    this->removeAt(x);
     this->size--;
     for (BinNodePos<T> g = this->hot; g; g = g->parent)
     {

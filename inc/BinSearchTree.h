@@ -25,7 +25,7 @@ protected:
      * @param hot 实际被删除节点的父亲
      * @return BinNodePos<T> 实际被删除节点的接替者
      */
-    BinNodePos<T> removeAt(BinNodePos<T>& x, BinNodePos<T>& hot);
+    BinNodePos<T> removeAt(BinNodePos<T>& x);
     /**
      * @brief 节点旋转变换
      * @param v 非空孙辈节点
@@ -80,14 +80,14 @@ bool BinSearchTree<T>::remove(const T& e)
     BinNodePos<T>& x = search(e);
     if (!x) // 如果不存在e，则不需要删除
         return false;
-    removeAt(x, hot);
+    removeAt(x);
     this->size--;
     this->updateHeightAbove(x);
     return true;
 }
 
 template<typename T>
-BinNodePos<T> BinSearchTree<T>::removeAt(BinNodePos<T>& x, BinNodePos<T>& hot)
+BinNodePos<T> BinSearchTree<T>::removeAt(BinNodePos<T>& x)
 {
     BinNodePos<T> w    = x;       // 实际被删除的节点
     BinNodePos<T> succ = nullptr; // 实际被删除节点的接替者
@@ -103,10 +103,10 @@ BinNodePos<T> BinSearchTree<T>::removeAt(BinNodePos<T>& x, BinNodePos<T>& hot)
             w->r_child; // 如果w父亲是x，则后继为x的右孩子；反之则为w父亲的左孩子
     }
     hot = w->parent;
-    if (succ)
+    if (succ != nullptr)
         succ->parent = hot;
-    delete w;
-    return x;
+    delete w;    // 释放被摘除节点
+    return succ; // 返回接替者
 }
 
 template<typename T>
