@@ -3,7 +3,14 @@
 #include "Macro.h"
 #include "Queue.h"
 #include "Stack.h"
-#include <sys/types.h>
+#include "inc/BinTree.h"
+
+// 红黑树节点颜色
+enum class RBColor
+{
+    Red,
+    Black
+};
 
 template<typename T>
 struct BinNode;
@@ -13,10 +20,11 @@ using BinNodePos = BinNode<T>*;
 
 template<typename T>
 struct BinNode
-{
+{ // TODO: 重新封装
     T             data;
     BinNodePos<T> parent, l_child, r_child;
     Rank          height;
+    RBColor       color; // 红黑树节点颜色
     BinNode() = default;
     explicit BinNode(T             data,
                      BinNodePos<T> parent  = nullptr,
@@ -24,8 +32,10 @@ struct BinNode
                      BinNodePos<T> r_child = nullptr,
                      Rank          height  = 0) :
         data(data),
-        parent(parent), l_child(l_child), r_child(r_child), height(height) {};
+        parent(parent), l_child(l_child), r_child(r_child), height(height), color(RBColor::Red) {};
     friend Rank stature(BinNodePos<T> x) { return x == nullptr ? -1 : x->height; }
+    friend bool isBlack(BinNodePos<T> x) { return x == nullptr || x->color == RBColor::Black; } // 外部节点也算黑节点
+    friend bool isRed(BinNodePos<T> x) { return !isBlack(x); }
     // 统计当前节点后代总数，亦即以其为根的子树的规模
     Rank size()
     {
@@ -36,9 +46,11 @@ struct BinNode
             s += r_child->size();
         return s;
     }
-    bool isRoot() { return !parent; }
-    bool isLChild() { return !isRoot() && (this == parent->l_child); }
-    bool isRChild() { return !isRoot() && (this == parent->r_child); }
+    bool          isRoot() const { return !parent; }
+    bool          isLChild() const { return !isRoot() && (this == parent->l_child); }
+    bool          isRChild() const { return !isRoot() && (this == parent->r_child); }
+    BinNodePos<T> sibling() { return isLChild() ? parent->r_child : parent->l_child; }
+    BinNodePos<T> uncle() { return parent->sibling(); }
     // 返回这个节点的直接后继
     BinNodePos<T> succ()
     {
@@ -249,7 +261,10 @@ protected:
         return x->isRoot() ? root : (x->isLChild() ? x->parent->l_child : x->parent->r_child);
     }
     // 更新x节点高度
-    Rank updateHeight(BinNodePos<T> x) { return x->height = 1 + std::max(stature(x->l_child), stature(x->r_child)); }
+    virtual Rank updateHeight(BinNodePos<T> x)
+    {
+        return x->height = 1 + std::max(stature(x->l_child), stature(x->r_child));
+    }
     // 更新x节点及其所有祖先高度
     void updateHeightAbove(BinNodePos<T> x)
     {

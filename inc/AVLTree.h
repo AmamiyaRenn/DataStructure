@@ -74,7 +74,10 @@ bool AVLTree<T>::remove(const T& e)
     for (BinNodePos<T> g = this->hot; g; g = g->parent)
     {
         if (!avlBalance(g))
-            this->parentPtrTo(g) = this->rotateAt(tallerChild(tallerChild(g)));
+        {
+            BinNodePos<T>& ptr = this->parentPtrTo(g);
+            ptr                = this->rotateAt(tallerChild(tallerChild(g)));
+        }
         this->updateHeight(g); // 一次调整可能导致全树高度降低
     }
     return true;
