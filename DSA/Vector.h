@@ -1,7 +1,7 @@
 ﻿#pragma once
 
+#include "DSA/Macro.h"
 #include "Fibonacci.h"
-#include "inc/Macro.h"
 
 template<typename T>
 class Vector

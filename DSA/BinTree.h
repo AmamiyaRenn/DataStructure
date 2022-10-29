@@ -1,9 +1,9 @@
 ﻿#pragma once
 
+#include "DSA/BinTree.h"
 #include "Macro.h"
 #include "Queue.h"
 #include "Stack.h"
-#include "inc/BinTree.h"
 
 // 红黑树节点颜色
 enum class RBColor

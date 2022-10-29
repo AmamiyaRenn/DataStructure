@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include "inc/Macro.h"
-#include "inc/Queue.h"
-#include "inc/Vector.h"
+#include "DSA/Macro.h"
+#include "DSA/Queue.h"
+#include "DSA/Vector.h"
 
 template<typename T>
 struct BTNode;

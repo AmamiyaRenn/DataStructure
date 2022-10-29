@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "inc/Graph.h"
-#include "inc/Macro.h"
+#include "DSA/Graph.h"
+#include "DSA/Macro.h"
 
 // 邻接矩阵
 template<typename Tv, typename Te>

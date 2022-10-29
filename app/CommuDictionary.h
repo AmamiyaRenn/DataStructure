@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include "../inc/Entry.h"
-#include "../inc/List.h"
-#include "../inc/Vector.h"
+#include "../DSA/Entry.h"
+#include "../DSA/List.h"
+#include "../DSA/Vector.h"
 #include <string.h>
 
 enum class SceneID
