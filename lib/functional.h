@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include <new>
 template<typename Tp>
 struct RemoveReference
 {

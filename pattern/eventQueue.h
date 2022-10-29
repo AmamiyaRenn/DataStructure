@@ -1,9 +1,8 @@
 ﻿#pragma once
 
+#include "DSA/List.h"
+#include "DSA/Vector.h"
 #include "lib/functional.h"
-#include <functional>
-#include <memory>
-#include <string>
 
 enum class EventType
 {
@@ -17,17 +16,15 @@ template<typename FuncType>
 class Event
 {
 public:
-    void addListener(std::function<FuncType> listener) { listeners.push_back(listener); };
-    void removeListener(uint32_t index) { listeners.erase(listeners.begin() + index); }
-    void removeAllListeners() { listeners.clear(); }
+    void addListener(Function<FuncType> listener) { listeners.insert(listener); };
     template<class... Arg>
-    void fire(Arg... parameters)
-    {
-        for (auto listener : listeners) // Perfect forward the parameters to the listener
-            listener(forward<Arg>(parameters)...);
+    void fire(EventType type, Arg... parameters)
+    { // Perfect forward the parameters to the listener
+        listeners[static_cast<int>(type)](forward<Arg>(parameters)...);
     }
 
 private:
-    /// \brief      Keeps track of all the attached listeners.
-    std::vector<std::function<FuncType>> listeners;
+    Vector<Function<FuncType>> listeners;
 };
+
+using EventQueue = List<EventType>;
