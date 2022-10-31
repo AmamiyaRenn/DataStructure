@@ -2,20 +2,20 @@
 
 /**
  * @brief 词条模板类
- * @tparam KET 关键码
- * @tparam VALUE 数值
+ * @tparam Key 关键码
+ * @tparam Value 数值
  */
-template<typename KEY, typename VALUE>
+template<typename Key, typename Value>
 struct Entry
 {
-    KEY   key;   // 关键码
-    VALUE value; // 数值
-    explicit Entry(KEY key = KEY(), VALUE value = VALUE()) : key(key), value(value) {};
-    Entry(const Entry<KEY, VALUE>& e) : key(e.key), value(e.value) {};
-    bool operator<(const Entry<KEY, VALUE>& e) { return key < e.key; }
-    bool operator>(const Entry<KEY, VALUE>& e) { return key > e.key; }
-    bool operator<=(const Entry<KEY, VALUE>& e) { return key <= e.key; }
-    bool operator>=(const Entry<KEY, VALUE>& e) { return key >= e.key; }
-    bool operator==(const Entry<KEY, VALUE>& e) { return key == e.key; }
-    bool operator!=(const Entry<KEY, VALUE>& e) { return key != e.key; }
+    Key   key;   // 关键码
+    Value value; // 数值
+    explicit Entry(Key key = Key(), Value value = Value()) : key(key), value(value) {};
+    Entry(const Entry<Key, Value>& e) : key(e.key), value(e.value) {};
+    bool operator<(const Entry<Key, Value>& e) { return key < e.key; }
+    bool operator>(const Entry<Key, Value>& e) { return key > e.key; }
+    bool operator<=(const Entry<Key, Value>& e) { return key <= e.key; }
+    bool operator>=(const Entry<Key, Value>& e) { return key >= e.key; }
+    bool operator==(const Entry<Key, Value>& e) { return key == e.key; }
+    bool operator!=(const Entry<Key, Value>& e) { return key != e.key; }
 };
