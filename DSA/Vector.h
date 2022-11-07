@@ -100,10 +100,10 @@ protected:
     Rank capacity;
     Rank size;
     T*   element;
-
-private:
     // 元素拷贝
     void copyFrom(const T* element, Rank low, Rank high);
+
+private:
     // 空间扩容
     void expand();
     // 空间缩容
