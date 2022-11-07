@@ -24,18 +24,21 @@ struct BinNode
     T             data;
     BinNodePos<T> parent, l_child, r_child;
     Rank          height;
+    Rank          npl;
     RBColor       color; // 红黑树节点颜色
     BinNode() = default;
     explicit BinNode(T             data,
                      BinNodePos<T> parent  = nullptr,
                      BinNodePos<T> l_child = nullptr,
                      BinNodePos<T> r_child = nullptr,
+                     Rank          npl     = 1,
                      Rank          height  = 0) :
         data(data),
-        parent(parent), l_child(l_child), r_child(r_child), height(height), color(RBColor::Red) {};
+        parent(parent), l_child(l_child), r_child(r_child), npl(npl), height(height), color(RBColor::Red) {};
     friend Rank stature(BinNodePos<T> x) { return x == nullptr ? -1 : x->height; }
     friend bool isBlack(BinNodePos<T> x) { return x == nullptr || x->color == RBColor::Black; } // 外部节点也算黑节点
     friend bool isRed(BinNodePos<T> x) { return !isBlack(x); }
+    void        updateNpl() { npl = r_child != nullptr ? r_child->npl + 1 : 1; }
     // 统计当前节点后代总数，亦即以其为根的子树的规模
     Rank size()
     {
