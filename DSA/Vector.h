@@ -84,17 +84,7 @@ public:
     // 对区间[low, high)进行归并排序
     void mergeSort(Rank low, Rank high);
     // 对全向量进行归并排序
-    void        mergeSort() { mergeSort(0, size); }
-    friend Rank match(Vector<T> Pattern, Vector<T> Text)
-    {
-        Rank n = Text.size, m = Pattern.size, i = 0, j = 0;
-        while (i < n && j < m)
-            if (Text[i] == Pattern[j])
-                i++, j++;
-            else
-                i -= j - 1, j = 0;
-        return i - j;
-    }
+    void mergeSort() { mergeSort(0, size); }
 
 protected:
     Rank capacity;
