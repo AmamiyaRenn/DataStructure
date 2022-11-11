@@ -134,3 +134,51 @@ Rank match_BM(const Vector<T>& Pattern, const Vector<T>& Text)
     delete[] gs;
     return t;
 }
+
+/**
+ * @brief 字符串KR匹配算法
+ * @param base 计算基数: 对于二进制串，取2；对于十进制串，取10；对于ASCII字符串，取128或256
+ */
+template<typename T>
+Rank match_KR(const Vector<T>& Pattern, const Vector<T>& Text, int base = 256)
+{
+    using HashCode = int64_t;
+    size_t    m = Pattern.getSize(), n = Text.getSize();
+    HashCode  hash_p = 0, hash_t = 0;
+    const int bias = (base == 2 || base == 10) ? '0' : 0; // 假定base只会取2、10、128、256
+    auto      digit = [bias](const Vector<T>& s, Rank i) { return s[i] - bias; }; // 取十进制串s的第i位数字值（假定s合法）
+    const int len = 97; // 散列表长度，这里为magic number
+    for (size_t p = 0; p < m; p++)
+    {
+        hash_p = (hash_p * base + digit(Pattern, p)) % len;
+        hash_t = (hash_t * base + digit(Text, p)) % len;
+    }
+
+    HashCode dm = 1; // 预处理：计算R^(m - 1) % M （仅需调用一次，不必优化）
+    for (size_t j = 1; j < m; j++)
+        dm = (dm * base) % len;
+
+    for (size_t t = 0;;)
+    {
+        if (hash_t == hash_p)
+        {
+            auto check1by1 = [&] {
+                for (size_t j = 0; j < m; j++)
+                    if (Pattern[j] != Text[t + j])
+                        return false;
+                return true;
+            }; // 哈希码符合，进行更加精细的对比
+            if (check1by1())
+                return t;
+        }
+        if (n - m < ++t)
+            return t; // 无匹配
+        else
+        {                                                            // 利用关联性快速更新哈希码
+            hash_t = (hash_t - digit(Text, t - 1) * dm) % len;       // 消去旧首哈希码影响
+            hash_t = (hash_t * base + digit(Text, t + m - 1)) % len; // 加入新尾部元素影响
+            if (hash_t < 0)
+                hash_t += len; // 确保散列码落在合法区间内
+        }
+    }
+}
