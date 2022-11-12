@@ -2,6 +2,11 @@
 
 #include "DSA/Macro.h"
 #include "Fibonacci.h"
+#include <cstdlib>
+#include <type_traits>
+
+#define use_quickSort_Iterative true
+#define use_partition_LGU true
 
 template<typename T>
 class Vector
@@ -85,6 +90,10 @@ public:
     void mergeSort(Rank low, Rank high);
     // 对全向量进行归并排序
     void mergeSort() { mergeSort(0, size); }
+    // 对区间[low, high)进行快速排序
+    void quickSort(Rank low, Rank high);
+    // 对全向量进行快速排序
+    void quickSort() { quickSort(0, size); }
 
 protected:
     Rank capacity;
@@ -100,6 +109,8 @@ private:
     void shrink();
     // mergeSort中的合并操作
     void merge(Rank low, Rank middle, Rank high);
+    // 轴点构造算法：通过调整元素位置构造区间[low, high)的轴点，并返回其秩
+    Rank partition(Rank low, Rank high);
 };
 
 template<typename T>
@@ -179,6 +190,72 @@ void Vector<T>::mergeSort(Rank low, Rank high)
     merge(low, middle, high);
 }
 
+#if use_partition_LGU
+template<typename T>
+Rank Vector<T>::partition(Rank low, Rank high)
+{ // LGU: pivot=[low], L=(low, middle], G=(middle, k), U=[k, high]
+    std::swap(element[low], element[low + rand() % (high - low)]); // 任选一个元素与首元素交换
+    T    pivot  = element[low]; // 以首元素为候选轴点——经以上交换，等效于随机选取
+    Rank middle = low;
+    for (Rank k = low + 1; k < high; k++)
+        if (element[k] < pivot)
+            std::swap(element[++middle], element[k]);
+    std::swap(element[low], element[middle]); // 轴点归位
+    return middle;
+}
+#else
+template<typename T>
+Rank Vector<T>::partition(Rank low, Rank high)
+{                                                                  // DUP版本
+    std::swap(element[low], element[low + rand() % (high - low)]); // 任选一个元素与首元素交换
+    T pivot = element[low]; // 以首元素为候选轴点——经以上交换，等效于随机选取
+    high--;
+    while (low < high)
+    { // 从向量两端交替向中间扫描
+        while (low < high)
+            if (pivot < element[high]) // 自右向左收拢
+                high--;
+            else // 直到遇到不大于pivot者，将其放入左侧空闲处
+            {
+                element[low++] = element[high];
+                break;
+            }
+        while (low < high)
+            if (element[low] < pivot) // 自左向右收拢
+                low++;
+            else // 直到遇到不小于pivot者，将其放入右侧空闲处
+            {
+                element[high--] = element[low];
+                break;
+            }
+    }
+    element[low] = pivot; // 将轴点放到该放的位置
+    return low;           // 返回轴点秩
+}
+#endif
+
+#if use_quickSort_Iterative
+template<typename T>
+void Vector<T>::quickSort(Rank low, Rank high)
+{ // TODO: iterative quickSort
+    if (high - low < 2)
+        return;
+    Rank pivot = partition(low, high);
+    quickSort(low, pivot);
+    quickSort(pivot + 1, high);
+}
+#else
+template<typename T>
+void Vector<T>::quickSort(Rank low, Rank high)
+{
+    if (high - low < 2)
+        return;
+    Rank pivot = partition(low, high);
+    quickSort(low, pivot);
+    quickSort(pivot + 1, high);
+}
+#endif
+
 template<typename T>
 void Vector<T>::copyFrom(const T* element, Rank low, Rank high)
 {
@@ -230,3 +307,6 @@ void Vector<T>::merge(Rank low, Rank middle, Rank high)
         a_array[a++] = b_array[b++];
     delete[] b_array;
 }
+
+#undef use_quickSort_Iterative
+#undef use_partition_LGU
