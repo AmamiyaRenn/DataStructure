@@ -13,28 +13,28 @@ class Vector
 {
 public:
     explicit Vector(Rank capacity = DEFAULT_CAPACITY, Rank size = 0) :
-        capacity(capacity), size(size), element(new T[capacity]) {};
-    Vector(Rank capacity, Rank size, T element) : capacity(capacity), size(size), element(new T[capacity])
+        m_capacity(capacity), m_size(size), m_element(new T[capacity]) {};
+    Vector(Rank capacity, Rank size, T element) : m_capacity(capacity), m_size(size), m_element(new T[capacity])
     {
         for (Rank i = 0; i < size; i++)
-            this->element[i] = element;
+            this->m_element[i] = element;
     };
     Vector(const T* A, Rank size) { copyFrom(A, 0, size); }
     Vector(const T* A, Rank low, Rank high) { copyFrom(A, low, high); }
-    Vector(const Vector<T>& V) { copyFrom(V.element, 0, V.size); }
-    Vector(const Vector<T>& V, Rank low, Rank high) { copyFrom(V.element, low, high); }
-    ~Vector() { delete[] element; }
+    Vector(const Vector<T>& V) { copyFrom(V.m_element, 0, V.m_size); }
+    Vector(const Vector<T>& V, Rank low, Rank high) { copyFrom(V.m_element, low, high); }
+    ~Vector() { delete[] m_element; }
     // 重载[]，左值版
-    T& operator[](Rank r) { return element[r]; }
+    T& operator[](Rank r) { return m_element[r]; }
     // 重载[]，右值版
-    T& operator[](Rank r) const { return element[r]; }
+    T& operator[](Rank r) const { return m_element[r]; }
     // 深复制
     Vector<T>& operator=(const Vector<T>& v);
-    Rank       getSize() const { return size; }
-    bool       empty() const { return !size; }
-    bool       full() const { return size == capacity; }
+    Rank       size() const { return m_size; }
+    bool       empty() const { return !m_size; }
+    bool       full() const { return m_size == m_capacity; }
     // 清空结构
-    void clear() { size = capacity = 0, delete[] element, element = nullptr; }
+    void clear() { m_size = m_capacity = 0, delete[] m_element, m_element = nullptr; }
     /**
      * @brief 插入元素
      * @param r 指定秩
@@ -42,7 +42,7 @@ public:
      */
     Rank insert(Rank r, const T& e);
     // 在末尾插入元素
-    Rank insert(const T& e) { return insert(size, e); }
+    Rank insert(const T& e) { return insert(m_size, e); }
     /**
      * @brief 删除[low, high)的元素
      * @param low 左闭
@@ -57,48 +57,48 @@ public:
      */
     T remove(Rank r)
     {
-        T e = element[r];
+        T e = m_element[r];
         remove(r, r + 1);
         return e;
     }
     template<class VST>
     void traverse(VST& visit)
     {
-        for (Rank i = 0; i < size; i++)
-            visit(element[i]);
+        for (Rank i = 0; i < m_size; i++)
+            visit(m_element[i]);
     }
     // 有序向量对区间[low, high)进行二分查找
     Rank binSearch(const T& e, Rank low, Rank high);
     // 有序向量对区间[low, high)进行斐波那契查找
     Rank fibSearch(const T& e, Rank low, Rank high);
     // 有序向量中查找e的秩，通过二分查找实现
-    Rank search(const T& e) { return (size <= 0) ? -1 : binSearch(e, 0, size); }
+    Rank search(const T& e) { return (m_size <= 0) ? -1 : binSearch(e, 0, m_size); }
     // 无序向量对区间[low, high)查找e的秩
     Rank find(const T& e, Rank low, Rank high) const
     {
-        while ((low < high--) && e != element[high])
+        while ((low < high--) && e != m_element[high])
             ;
         return high;
     }
     // 无序向量中查找e的秩
-    Rank find(const T& e) const { return find(e, 0, size); }
+    Rank find(const T& e) const { return find(e, 0, m_size); }
     // 对区间[low, high)进行冒泡排序，逆序对改进版
     void bubbleSort(Rank low, Rank high);
     // 对全向量进行冒泡排序
-    void bubbleSort() { bubbleSort(0, size); }
+    void bubbleSort() { bubbleSort(0, m_size); }
     // 对区间[low, high)进行归并排序
     void mergeSort(Rank low, Rank high);
     // 对全向量进行归并排序
-    void mergeSort() { mergeSort(0, size); }
+    void mergeSort() { mergeSort(0, m_size); }
     // 对区间[low, high)进行快速排序
     void quickSort(Rank low, Rank high);
     // 对全向量进行快速排序
-    void quickSort() { quickSort(0, size); }
+    void quickSort() { quickSort(0, m_size); }
 
 protected:
-    Rank capacity;
-    Rank size;
-    T*   element;
+    Rank m_capacity;
+    Rank m_size;
+    T*   m_element;
     // 元素拷贝
     void copyFrom(const T* element, Rank low, Rank high);
 
@@ -118,8 +118,8 @@ Vector<T>& Vector<T>::operator=(const Vector<T>& v)
 {
     if (this == &v)
         return *this;
-    delete[] element;
-    copyFrom(v.element, 0, v.size);
+    delete[] m_element;
+    copyFrom(v.m_element, 0, v.m_size);
     return *this;
 };
 
@@ -127,10 +127,10 @@ template<typename T>
 Rank Vector<T>::insert(Rank r, const T& e)
 {
     expand();
-    for (Rank i = size; i > r; i--)
-        element[i] = element[i - 1];
-    element[r] = e;
-    size++;
+    for (Rank i = m_size; i > r; i--)
+        m_element[i] = m_element[i - 1];
+    m_element[r] = e;
+    m_size++;
     return r;
 }
 
@@ -139,9 +139,9 @@ Rank Vector<T>::remove(Rank low, Rank high)
 {
     if (low == high)
         return 0;
-    while (high < size)
-        element[low++] = element[high++];
-    size = low;
+    while (high < m_size)
+        m_element[low++] = m_element[high++];
+    m_size = low;
     shrink();
     return high - low;
 }
@@ -152,7 +152,7 @@ Rank Vector<T>::binSearch(const T& e, Rank low, Rank high)
     while (low < high)
     {
         Rank middle = (low + high) / 2;
-        (e < element[middle]) ? high = middle : low = middle + 1;
+        (e < m_element[middle]) ? high = middle : low = middle + 1;
     }
     return low - 1;
 };
@@ -165,7 +165,7 @@ Rank Vector<T>::fibSearch(const T& e, Rank low, Rank high)
         while (high - low < fib.get())
             fib.prev();                    // fib(k)永远在[low, high)区间内
         Rank middle = low + fib.get() - 1; // 轴点为fib(k-1)-1
-        e < element[middle] ? high = middle : low = middle + 1;
+        e < m_element[middle] ? high = middle : low = middle + 1;
     }
     return --low; // 循环结束时，low为大于e的最小秩，所以要--
 }
@@ -175,8 +175,8 @@ void Vector<T>::bubbleSort(Rank low, Rank high)
 {
     for (Rank last = low; low < high; high = last)
         for (Rank i = (last = low) + 1; i < high; i++)
-            if (element[i - 1] > element[i])
-                swap(element[i - 1], element[last = i]);
+            if (m_element[i - 1] > m_element[i])
+                swap(m_element[i - 1], m_element[last = i]);
 }
 
 template<typename T>
@@ -194,13 +194,13 @@ void Vector<T>::mergeSort(Rank low, Rank high)
 template<typename T>
 Rank Vector<T>::partition(Rank low, Rank high)
 { // LGU: pivot=[low], L=(low, middle], G=(middle, k), U=[k, high]
-    std::swap(element[low], element[low + rand() % (high - low)]); // 任选一个元素与首元素交换
-    T    pivot  = element[low]; // 以首元素为候选轴点——经以上交换，等效于随机选取
+    std::swap(m_element[low], m_element[low + rand() % (high - low)]); // 任选一个元素与首元素交换
+    T    pivot  = m_element[low]; // 以首元素为候选轴点——经以上交换，等效于随机选取
     Rank middle = low;
     for (Rank k = low + 1; k < high; k++)
-        if (element[k] < pivot)
-            std::swap(element[++middle], element[k]);
-    std::swap(element[low], element[middle]); // 轴点归位
+        if (m_element[k] < pivot)
+            std::swap(m_element[++middle], m_element[k]);
+    std::swap(m_element[low], m_element[middle]); // 轴点归位
     return middle;
 }
 #else
@@ -259,34 +259,34 @@ void Vector<T>::quickSort(Rank low, Rank high)
 template<typename T>
 void Vector<T>::copyFrom(const T* element, Rank low, Rank high)
 {
-    this->element = new T[capacity = std::max(DEFAULT_CAPACITY, 2 * (high - low))];
-    for (size = 0; low < high; size++, low++)
-        this->element[size] = element[low]; // 不能使用malloc，因为malloc只能实现浅拷贝
+    this->m_element = new T[m_capacity = std::max(DEFAULT_CAPACITY, 2 * (high - low))];
+    for (m_size = 0; low < high; m_size++, low++)
+        this->m_element[m_size] = element[low]; // 不能使用malloc，因为malloc只能实现浅拷贝
 }
 
 template<typename T>
 void Vector<T>::expand()
 {
-    if (size < capacity)
+    if (m_size < m_capacity)
         return;
-    if (capacity < DEFAULT_CAPACITY)
-        capacity = DEFAULT_CAPACITY;
-    T* old_element = element;
-    element        = new T[capacity <<= 1];
-    for (Rank i = 0; i < size; i++)
-        element[i] = old_element[i];
+    if (m_capacity < DEFAULT_CAPACITY)
+        m_capacity = DEFAULT_CAPACITY;
+    T* old_element = m_element;
+    m_element      = new T[m_capacity <<= 1];
+    for (Rank i = 0; i < m_size; i++)
+        m_element[i] = old_element[i];
     delete[] old_element;
 }
 
 template<typename T>
 void Vector<T>::shrink()
 {
-    if (capacity < DEFAULT_CAPACITY << 1 || size << 2 > capacity)
+    if (m_capacity < DEFAULT_CAPACITY << 1 || m_size << 2 > m_capacity)
         return;
-    T* old_element = element;
-    element        = new T[capacity >>= 1];
-    for (Rank i = 0; i < size; i++)
-        element[i] = old_element[i];
+    T* old_element = m_element;
+    m_element      = new T[m_capacity >>= 1];
+    for (Rank i = 0; i < m_size; i++)
+        m_element[i] = old_element[i];
     delete[] old_element;
 }
 
@@ -294,13 +294,13 @@ template<typename T>
 void Vector<T>::merge(Rank low, Rank middle, Rank high)
 {
     Rank a = 0, b = 0, c = 0;
-    T*   a_array  = element + low; // [low, high)
+    T*   a_array  = m_element + low; // [low, high)
     Rank b_length = middle - low;
     T*   b_array  = new T[b_length]; // [low, middle)
     for (Rank i = 0; i < b_length; i++)
         b_array[i] = a_array[i];
     Rank c_length = high - middle;
-    T*   c_array  = element + middle; // [middle, high)
+    T*   c_array  = m_element + middle; // [middle, high)
     while ((b < b_length) && (c < c_length))
         a_array[a++] = (b_array[b] < c_array[c]) ? b_array[b++] : c_array[c++];
     while (b < b_length)

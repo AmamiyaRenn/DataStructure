@@ -48,7 +48,7 @@ public:
     List(const List<T>& L)
     {
         init();
-        copyNodes(L.first(), L.size);
+        copyNodes(L.first(), L.m_size);
     }
     // 复制L中自第r项起的n项
     List(const List<T>& L, Rank r, int n)
@@ -79,7 +79,7 @@ public:
     void travForward(VST& visit)
     {
         ListNodePos<T> p = first();
-        Rank           n = size;
+        Rank           n = m_size;
         while (0 < n--)
         {
             visit(p->element);
@@ -90,8 +90,8 @@ public:
     ListNodePos<T> first() const { return head->next; }
     // 尾节点位置
     ListNodePos<T> last() const { return tail->prev; }
-    Rank           getSize() const { return size; }
-    bool           empty() const { return !size; }
+    Rank           size() const { return m_size; }
+    bool           empty() const { return !m_size; }
     // 在无序列表内的节点p的n个真前驱中找第一个找到的e的位置
     ListNodePos<T> find(const T& e, Rank n, ListNodePos<T> p) const
     {
@@ -101,7 +101,7 @@ public:
         return nullptr;
     }
     // 在无序列表中找e
-    ListNodePos<T> find(const T& e) const { return find(e, size, tail); }
+    ListNodePos<T> find(const T& e) const { return find(e, m_size, tail); }
     // 在有序列表内的节点p的n个真前驱中找不大于e的最后者
     ListNodePos<T> search(const T& e, Rank n, ListNodePos<T> p) const
     {
@@ -118,7 +118,7 @@ public:
      */
     ListNodePos<T> insert(const T& e, ListNodePos<T> p)
     {
-        size++;
+        m_size++;
         return p->insertAsPrev(e);
     }
     /**
@@ -127,7 +127,7 @@ public:
      */
     ListNodePos<T> insert(ListNodePos<T> p, const T& e)
     {
-        size++;
+        m_size++;
         return p->insertAsNext(e);
     }
     /**
@@ -146,7 +146,7 @@ public:
      */
     T remove(ListNodePos<T> p)
     {
-        size--;
+        m_size--;
         T copy        = p->element;
         p->prev->next = p->next;
         p->next->prev = p->prev;
@@ -159,8 +159,8 @@ public:
      */
     Rank clear()
     {
-        Rank old_size = size;
-        while (size)
+        Rank old_size = m_size;
+        while (m_size)
             remove(head->next);
         return old_size;
     }
@@ -187,7 +187,7 @@ public:
         }
     }
     // 对全列表进行选择排序
-    void selectionSort() { selectionSort(first(), size); }
+    void selectionSort() { selectionSort(first(), m_size); }
     //对列表中起始于位置p、宽度为n的区间做插入排序
     void insertionSort(ListNodePos<T> p, Rank n)
     {
@@ -198,7 +198,7 @@ public:
         }
     }
     // 对全列表进行插入排序
-    void insertionSort() { insertionSort(first(), size); }
+    void insertionSort() { insertionSort(first(), m_size); }
     // p后n个元素内找到最大的元素返回其位置
     ListNodePos<T> selectMax(ListNodePos<T> p, Rank n)
     {
@@ -210,13 +210,13 @@ public:
     }
 
 protected:
-    Rank           size;
+    Rank           m_size;
     ListNodePos<T> head, tail;
 
 private:
     void init()
     {
-        size = 0;
+        m_size = 0;
         head = new ListNode<T>(), tail = new ListNode<T>();
         head->prev = nullptr, head->next = tail, tail->prev = head, tail->next = nullptr;
     }
@@ -230,29 +230,29 @@ private:
 template<typename T>
 Rank List<T>::deduplicate()
 {
-    if (size < 2)
+    if (m_size < 2)
         return 0;
     ListNodePos<T> p        = first()->next;
-    Rank           old_size = size;
+    Rank           old_size = m_size;
     for (Rank r = 1; p != tail; p = p->next)
         if (ListNodePos<T> q = find(p->element, r, p))
             remove(q);
         else
             r++;
-    return old_size - size;
+    return old_size - m_size;
 }
 
 template<typename T>
 Rank List<T>::uniquify()
 {
-    if (size < 2)
+    if (m_size < 2)
         return 0;
     ListNodePos<T> p        = first()->next, q;
-    Rank           old_size = size;
+    Rank           old_size = m_size;
     while ((q = p->next) != tail)
         if (p->element == q->element)
             remove(q);
         else
             p = q;
-    return old_size - size;
+    return old_size - m_size;
 }

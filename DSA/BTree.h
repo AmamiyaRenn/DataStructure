@@ -34,9 +34,9 @@ template<typename T>
 class BTree
 {
 public:
-    explicit BTree(Rank order = 5) : size(0), order(order), root(new BTNode<T>) {}
+    explicit BTree(Rank order = 5) : m_size(0), order(order), root(new BTNode<T>) {}
     ~BTree() { delete root; }
-    Rank          getSize() const { return size; }
+    Rank          size() const { return m_size; }
     Rank          getOrder() const { return order; }
     BTNodePos<T>& getRoot() { return root; }
     bool          empty() const { return root == nullptr; }
@@ -64,8 +64,8 @@ public:
     }
 
 protected:
-    Rank         size;  // 关键码总数
-    Rank         order; // 阶数
+    Rank         m_size; // 关键码总数
+    Rank         order;  // 阶数
     BTNodePos<T> root;
     BTNodePos<T> hot;
     // 通过节点分裂，解决上溢问题
@@ -99,7 +99,7 @@ bool BTree<T>::insert(const T& e)
     Rank r = hot->key.search(e); // 插入e的合适位置
     hot->key.insert(r + 1, e);
     hot->child.insert(r + 2, nullptr);
-    size++;
+    m_size++;
     solveOverflow(hot);
     return true;
 }
@@ -122,7 +122,7 @@ bool BTree<T>::remove(const T& e)
     }
     v->key.remove(r);
     v->child.remove(r + 1);
-    size--;
+    m_size--;
     solveUnderflow(v);
     return true;
 }
@@ -130,7 +130,7 @@ bool BTree<T>::remove(const T& e)
 template<typename T>
 void BTree<T>::solveOverflow(BTNodePos<T> v)
 {
-    while (order <= v->key.getSize()) // 上溢条件：order<=节点关键码个数
+    while (order <= v->key.size()) // 上溢条件：order<=节点关键码个数
     {
         Rank pivot = order / 2; // 分裂的轴点ks
         // 分出v, u
@@ -166,12 +166,12 @@ void BTree<T>::solveOverflow(BTNodePos<T> v)
 template<typename T>
 void BTree<T>::solveUnderflow(BTNodePos<T> v)
 {
-    while (v->child.getSize() < (order + 1) / 2) // 下溢条件：节点关键码个数<Ceiling(order/2)
+    while (v->child.size() < (order + 1) / 2) // 下溢条件：节点关键码个数<Ceiling(order/2)
     {
         BTNodePos<T> p = v->parent; // v的父节点p
         if (p == nullptr)
         { // v已经到达根节点
-            if (v->key.getSize() == 0 && v->child[0] != nullptr)
+            if (v->key.size() == 0 && v->child[0] != nullptr)
             { // 此时v如果不含有关键码却有非空孩子(一定唯一)，则需要删除这一层
                 root         = v->child[0]; // 根节点转交
                 root->parent = nullptr;
@@ -181,7 +181,7 @@ void BTree<T>::solveUnderflow(BTNodePos<T> v)
         }
         Rank r               = p->child.find(v); // v是p的第r个孩子
         auto sibling_is_rich = [this](BTNodePos<T> sibling) {
-            return (order + 1) / 2 < sibling->child.getSize();
+            return (order + 1) / 2 < sibling->child.size();
         }; // 兄弟足够给出关键码
         // 情况1：左顾——向左兄弟要关键码
         if (0 < r)
@@ -190,15 +190,15 @@ void BTree<T>::solveUnderflow(BTNodePos<T> v)
             if (sibling_is_rich(l_sibling))
             {                                    // 左兄弟足够分出一个关键码，则可以节点旋转
                 v->key.insert(0, p->key[r - 1]); // p送出对应的关键码(v的prev)
-                p->key[r - 1] = l_sibling->key.remove(l_sibling->key.getSize() - 1); // 左兄弟给出最大的关键码为p补充
-                v->child.insert(0, l_sibling->child.remove(l_sibling->child.getSize() - 1)); // 左兄弟过继最右侧孩子给v
+                p->key[r - 1] = l_sibling->key.remove(l_sibling->key.size() - 1); // 左兄弟给出最大的关键码为p补充
+                v->child.insert(0, l_sibling->child.remove(l_sibling->child.size() - 1)); // 左兄弟过继最右侧孩子给v
                 if (v->child[0] != nullptr) // v新的孩子如果存在，则其父亲为v
                     v->child[0]->parent = v;
                 return; // 至此，通过右旋解决了问题
             }
         }
         // 情况2：右盼——左兄弟手头紧，尝试向右兄弟要关键码
-        if (r < p->child.getSize() - 1)
+        if (r < p->child.size() - 1)
         { // v不是p的最后一个孩子，则右兄弟存在
             BTNodePos<T> r_sibling = p->child[r + 1];
             if (sibling_is_rich(r_sibling))
@@ -206,8 +206,8 @@ void BTree<T>::solveUnderflow(BTNodePos<T> v)
                 v->key.insert(p->key[r]);
                 p->key[r] = r_sibling->key.remove(0);
                 v->child.insert(r_sibling->child.remove(0));
-                if (v->child[v->child.getSize() - 1] != nullptr)
-                    v->child[v->child.getSize() - 1]->parent = v;
+                if (v->child[v->child.size() - 1] != nullptr)
+                    v->child[v->child.size() - 1]->parent = v;
                 return;
             }
         }
@@ -218,14 +218,14 @@ void BTree<T>::solveUnderflow(BTNodePos<T> v)
             l_sibling->key.insert(p->key.remove(r - 1)); // p的r-1个关键码转入左兄弟，准备合并
             p->child.remove(r);                          // v不再是p的第r个孩子
             l_sibling->child.insert(v->child.remove(0)); // v最左侧孩子过继给ls
-            if (l_sibling->child[l_sibling->child.getSize() - 1] != nullptr) // 左兄弟新的孩子如果存在，则其父亲为左兄弟
-                l_sibling->child[l_sibling->child.getSize() - 1]->parent = l_sibling;
+            if (l_sibling->child[l_sibling->child.size() - 1] != nullptr) // 左兄弟新的孩子如果存在，则其父亲为左兄弟
+                l_sibling->child[l_sibling->child.size() - 1]->parent = l_sibling;
             while (!v->key.empty())
             {
                 l_sibling->key.insert(v->key.remove(0));
                 l_sibling->child.insert(v->child.remove(0));
-                if (l_sibling->child[l_sibling->child.getSize() - 1] != nullptr)
-                    l_sibling->child[l_sibling->child.getSize() - 1]->parent = l_sibling;
+                if (l_sibling->child[l_sibling->child.size() - 1] != nullptr)
+                    l_sibling->child[l_sibling->child.size() - 1]->parent = l_sibling;
             }
             delete v;
         }
@@ -234,13 +234,13 @@ void BTree<T>::solveUnderflow(BTNodePos<T> v)
             BTNodePos<T> r_sibling = p->child[r + 1];
             r_sibling->key.insert(0, p->key.remove(r));
             p->child.remove(r);
-            r_sibling->child.insert(0, v->child.remove(v->child.getSize() - 1));
+            r_sibling->child.insert(0, v->child.remove(v->child.size() - 1));
             if (r_sibling->child[0] != nullptr)
                 r_sibling->child[0]->parent = r_sibling;
             while (!v->key.empty())
             {
-                r_sibling->key.insert(0, v->key.remove(v->key.getSize() - 1));
-                r_sibling->child.insert(0, v->child.remove(v->child.getSize() - 1));
+                r_sibling->key.insert(0, v->key.remove(v->key.size() - 1));
+                r_sibling->child.insert(0, v->child.remove(v->child.size() - 1));
                 if (r_sibling->child[0] != nullptr)
                     r_sibling->child[0]->parent = r_sibling;
             }

@@ -7,7 +7,7 @@ class Stack : Vector<T>
 {
 public:
     using Vector<T>::empty;
-    using Vector<T>::getSize;
+    using Vector<T>::size;
     using Vector<T>::Vector;
     void push(const T& element) { this->insert(element); }
     T    pop() { return this->remove(this->size - 1); }

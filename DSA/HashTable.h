@@ -13,7 +13,7 @@ public:
     explicit HashTable(Rank capacity)
     {
         this->capacity = prime(capacity, capacity + 1009);
-        size           = 0;
+        m_size         = 0;
         bucket         = new Entry<Key, Value>[capacity];
         lazytag        = 0;
         removed        = new Bitmap(capacity);
@@ -24,7 +24,7 @@ public:
         delete removed;
     }
     // 当前词条数
-    Rank getSize() const override { return size; }
+    Rank size() const override { return m_size; }
     // 插入词条（key重复会无效）
     bool put(Key key, Value value) override
     {
@@ -32,13 +32,13 @@ public:
             return false;
         Rank r    = probe4Free(key);
         bucket[r] = Entry<Key, Value>(key, value);
-        size++;
+        m_size++;
         if (removed->test(r))
         {
             removed->clear(r);
             lazytag--;
         }
-        if ((size + lazytag) * 2 > capacity) // 装填因子大于50%，重散列
+        if ((m_size + lazytag) * 2 > capacity) // 装填因子大于50%，重散列
             rehash();
         return true;
     }
@@ -54,10 +54,10 @@ public:
         Rank r = probe4Hit(key);
         if (bucket[r] == this->nullEntry())
             return false;
-        size--;
+        m_size--;
         removed->set(r);
         lazytag++;
-        if (3 * size < lazytag) //若懒惰删除标记过多，重散列
+        if (3 * m_size < lazytag) //若懒惰删除标记过多，重散列
             rehash();
         return true;
     }
@@ -67,7 +67,7 @@ protected:
     {
         Rank               old_capacity = capacity;
         Entry<Key, Value>* old_bucket   = bucket;
-        capacity                        = prime(4 * size, 4 * size + 1009);
+        capacity                        = prime(4 * m_size, 4 * m_size + 1009);
         bucket                          = new Entry<Key, Value>[capacity];
         delete removed;
         removed = new Bitmap(capacity);
@@ -113,7 +113,7 @@ protected:
 
 private:
     Rank               capacity; // 桶个数
-    Rank               size;     // 词条数
+    Rank               m_size;   // 词条数
     Rank               lazytag;  // 懶惰刪除标记
     Entry<Key, Value>* bucket;   // 词条桶数组
     Bitmap*            removed;  // 懒惰删除标记

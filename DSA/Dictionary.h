@@ -8,7 +8,7 @@ class Dictionary
 {
 public:
     // 当前词条数
-    virtual Rank getSize() const = 0;
+    virtual Rank size() const = 0;
     // 插入词条（key重复会无效）
     virtual bool put(Key key, Value value) = 0;
     // 读取词条

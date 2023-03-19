@@ -10,8 +10,8 @@
 template<typename T>
 Rank match_BruteForce(const Vector<T>& Pattern, const Vector<T>& Text)
 {
-    Rank n = Text.getSize(), t = 0;    // 文本串指针
-    Rank m = Pattern.getSize(), p = 0; // 模式串指针
+    Rank n = Text.size(), t = 0;    // 文本串指针
+    Rank m = Pattern.size(), p = 0; // 模式串指针
     while (t < n && p < m)
         if (Text[t] == Pattern[p])
             t++, p++; // 匹配成功，指针后移
@@ -24,7 +24,7 @@ Rank match_BruteForce(const Vector<T>& Pattern, const Vector<T>& Text)
 template<typename T>
 static int* buildNext(const Vector<T>& Pattern)
 {
-    size_t m    = Pattern.getSize();
+    size_t m    = Pattern.size();
     Rank   t    = 0;          // “主”串指针
     int*   next = new int[m]; // next表
     Rank   p = next[0] = -1;  // 模式串指针
@@ -44,9 +44,9 @@ static int* buildNext(const Vector<T>& Pattern)
 template<typename T>
 Rank match_KMP(const Vector<T>& Pattern, const Vector<T>& Text)
 {
-    int* next = buildNext(Pattern);    // next表
-    Rank n = Text.getSize(), t = 0;    // 文本串指针
-    Rank m = Pattern.getSize(), p = 0; // 模式串指针
+    int* next = buildNext(Pattern); // next表
+    Rank n = Text.size(), t = 0;    // 文本串指针
+    Rank m = Pattern.size(), p = 0; // 模式串指针
     while (t < n && p < m)
         if (p < 0 || Text[t] == Pattern[p])
             t++, p++; // 匹配成功，指针后移
@@ -61,7 +61,7 @@ template<typename T>
 static int* buildBC(const Vector<T>& Pattern)
 {
     uint32_t n  = sizeof(T) * 8; // 字符集个数
-    uint32_t m  = Pattern.getSize();
+    uint32_t m  = Pattern.size();
     Rank     p  = 0;          // 模式串指针
     int*     bc = new int[n]; // bad character table
     for (uint32_t i = 0; i < n; i++)
@@ -75,7 +75,7 @@ static int* buildBC(const Vector<T>& Pattern)
 template<typename T>
 static int* buildSS(const Vector<T>& Pattern)
 {
-    size_t m  = Pattern.getSize();
+    size_t m  = Pattern.size();
     int*   ss = new int[m]; // suffix size table
     ss[m - 1] = m;          // 对于最后一个字符而言，其最大匹配后缀长度就是整个Pattern的长度
     for (int low = m - 1, high = m - 1, i = low - 1; 0 <= i; i--)
@@ -97,7 +97,7 @@ template<typename T>
 static int* buildGS(const Vector<T>& Pattern)
 {
     int*   ss = buildSS(Pattern);
-    size_t m  = Pattern.getSize();
+    size_t m  = Pattern.size();
     int*   gs = new int[m]; // Good suffix shift table
     for (size_t i = 0; i < m; i++)
         gs[i] = m; // 初始化
@@ -117,7 +117,7 @@ Rank match_BM(const Vector<T>& Pattern, const Vector<T>& Text)
 {
     int*   bc = buildBC(Pattern);
     int*   gs = buildGS(Pattern);
-    size_t n = Text.getSize(), m = Pattern.getSize();
+    size_t n = Text.size(), m = Pattern.size();
     Rank   t = 0; // 文本串指针
     while (t + m <= n)
     {
@@ -143,7 +143,7 @@ template<typename T>
 Rank match_KR(const Vector<T>& Pattern, const Vector<T>& Text, int base = 256)
 {
     using HashCode = int64_t;
-    size_t    m = Pattern.getSize(), n = Text.getSize();
+    size_t    m = Pattern.size(), n = Text.size();
     HashCode  hash_p = 0, hash_t = 0;
     const int bias = (base == 2 || base == 10) ? '0' : 0; // 假定base只会取2、10、128、256
     auto      digit = [bias](const Vector<T>& s, Rank i) { return s[i] - bias; }; // 取十进制串s的第i位数字值（假定s合法）

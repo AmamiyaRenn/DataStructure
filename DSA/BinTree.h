@@ -157,22 +157,22 @@ template<typename T>
 class BinTree
 {
 public:
-    explicit BinTree(Rank size = 0, BinNodePos<T> root = nullptr) : size(size), root(root) {};
+    explicit BinTree(Rank size = 0, BinNodePos<T> root = nullptr) : m_size(size), root(root) {};
     // 层次构造一个完全二叉树
     BinTree(Rank n, T* a);
     ~BinTree() = default;
-    Rank          getSize() const { return size; }
+    Rank          size() const { return m_size; }
     BinNodePos<T> getRoot() const { return root; }
     // 把e作为根节点插入
     BinNodePos<T> insert(const T& e)
     {
-        size        = 1;
+        m_size      = 1;
         return root = new BinNode<T>(e);
     }
     // 把e作为x的左孩子插入，并返回e的位置
     BinNodePos<T> insert(const T& e, BinNodePos<T> x)
     {
-        size++;
+        m_size++;
         x->insertAsLChild(e);
         updateHeightAbove(x);
         return x->l_child;
@@ -180,7 +180,7 @@ public:
     // 把e作为x的左孩子插入，并返回e的位置
     BinNodePos<T> insert(BinNodePos<T> x, const T& e)
     {
-        size++;
+        m_size++;
         x->insertAsRChild(e);
         updateHeightAbove(x);
         return x->r_child;
@@ -191,7 +191,7 @@ public:
         parentPtrTo(x) = nullptr;
         updateHeightAbove(x->parent);
         Rank n = removeAt(x);
-        size -= n;
+        m_size -= n;
         return n;
     }
     // 左子树接入：S当作节点x的左子树接入二叉树，S本身置空，返回x
@@ -199,7 +199,7 @@ public:
     {
         if ((x->l_child = S->root))
             x->l_child->parent = x;
-        size += S->size;
+        m_size += S->m_size;
         updateHeightAbove(x);
         delete S;
         S = nullptr;
@@ -210,7 +210,7 @@ public:
     {
         if ((x->r_child = S->root))
             x->r_child->parent = x;
-        size += S->size;
+        m_size += S->m_size;
         updateHeightAbove(x);
         delete S;
         S = nullptr;
@@ -223,7 +223,7 @@ public:
         updateHeightAbove(x->parent);
         x->parent            = nullptr;
         BinTree<T>* new_tree = new BinTree<T>(x->size(), x);
-        size -= new_tree->size;
+        m_size -= new_tree->m_size;
         return new_tree;
     }
     // 前序遍历
@@ -256,7 +256,7 @@ public:
     }
 
 protected:
-    Rank          size;
+    Rank          m_size;
     BinNodePos<T> root;
     // 返回x的父亲指向x所用的指针
     BinNodePos<T>& parentPtrTo(BinNodePos<T> x)

@@ -8,7 +8,7 @@ class Queue : protected List<T>
 public:
     using List<T>::empty;
     using List<T>::List;
-    using List<T>::getSize;
+    using List<T>::size;
     void enqueue(const T& e) { this->insertAsLast(e); }
     T    dequeue() { return this->remove(this->first()); }
     T&   front() { return this->first()->element; }
