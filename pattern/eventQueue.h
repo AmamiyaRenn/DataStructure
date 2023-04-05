@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include "DSA/List.h"
-#include "DSA/Vector.h"
-#include "lib/functional.h"
+#include "../DSA/List.h"
+#include "../DSA/Vector.h"
+#include "../lib/functional.h"
 
 enum class EventType
 {

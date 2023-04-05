@@ -1,15 +1,15 @@
 ﻿#pragma once
 
-#include "pattern/singleton.h"
-#include "reflect/ClassField.h"
-
-#include "reflect/ClassMethod.h"
+#include "../pattern/singleton.h"
+#include "../reflect/ClassField.h"
+#include "../reflect/ClassMethod.h"
 #include <functional>
 #include <map>
 #include <stdint.h>
 #include <string>
 #include <vadefs.h>
 #include <vector>
+
 
 class Object;
 

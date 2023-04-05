@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "DSA/BinSearchTree.h"
+#include "BinSearchTree.h"
 
 /**
  * @brief 伸展树

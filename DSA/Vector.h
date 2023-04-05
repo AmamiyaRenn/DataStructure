@@ -1,9 +1,10 @@
 ﻿#pragma once
 
-#include "DSA/Macro.h"
 #include "Fibonacci.h"
+#include "Macro.h"
 #include <cstdlib>
 #include <type_traits>
+
 
 #define use_quickSort_Iterative true
 #define use_partition_LGU true

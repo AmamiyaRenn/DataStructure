@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include "DSA/BinTree.h"
-#include "DSA/Macro.h"
-#include "DSA/PriorityQueue.h"
+#include "BinTree.h"
+#include "Macro.h"
+#include "PriorityQueue.h"
 #include <utility>
 
 template<typename T>

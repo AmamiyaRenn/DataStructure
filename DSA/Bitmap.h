@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "DSA/Macro.h"
+#include "Macro.h"
 
 class Bitmap
 {

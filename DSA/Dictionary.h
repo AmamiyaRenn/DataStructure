@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "DSA/Entry.h"
-#include "DSA/Macro.h"
+#include "Entry.h"
+#include "Macro.h"
 
 template<typename Key, typename Value>
 class Dictionary

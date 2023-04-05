@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "pattern/singleton.h"
-#include "reflect/ClassFactory.h"
+#include "../pattern/singleton.h"
+#include "../reflect/ClassFactory.h"
 #include <vadefs.h>
 
 class ClassRegister

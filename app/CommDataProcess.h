@@ -6,7 +6,7 @@
 // typedef char u8;
 //数据头 0xff,0xfe; id u8; 一字节检验和； 数据尾 '\n','\r'
 //原始数据增加了6个字节
-const static char head_char[2] = {0xff, 0xfe};
+const static char head_char[2] = {static_cast<char>(0xff), static_cast<char>(0xfe)};
 const static char end_char[2]  = {'\n', '\r'};
 
 class DataProcess

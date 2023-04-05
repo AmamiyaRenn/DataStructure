@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "BinSearchTree.h"
-#include "DSA/BinTree.h"
+#include "BinTree.h"
 #include <sys/types.h>
 #include <type_traits>
 

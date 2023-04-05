@@ -1,9 +1,9 @@
 ﻿#pragma once
 
-#include "DSA/Bitmap.h"
-#include "DSA/Dictionary.h"
-#include "DSA/Macro.h"
-#include "DSA/Prime.h"
+#include "Bitmap.h"
+#include "Dictionary.h"
+#include "Macro.h"
+#include "Prime.h"
 #include <string.h>
 
 template<typename Key, typename Value>

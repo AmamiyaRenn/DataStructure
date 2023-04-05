@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include "DSA/BinSearchTree.h"
-#include "DSA/BinTree.h"
-#include "DSA/Macro.h"
+#include "BinSearchTree.h"
+#include "BinTree.h"
+#include "Macro.h"
 
 // 红黑树模板类
 template<typename T>

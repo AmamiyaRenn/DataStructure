@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "DSA/BinTree.h"
+#include "BinTree.h"
 #include "Macro.h"
 #include "Queue.h"
 #include "Stack.h"

@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "DSA/Macro.h"
-#include "DSA/Vector.h"
+#include "Macro.h"
+#include "Vector.h"
 #include <algorithm>
 #include <stdint.h>
 #include <type_traits>

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "reflect/ClassRegister.h"
+#include "../reflect/ClassRegister.h"
 
 #include <iostream>
 

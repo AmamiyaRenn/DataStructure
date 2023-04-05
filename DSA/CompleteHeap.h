@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include "DSA/Macro.h"
-#include "DSA/PriorityQueue.h"
-#include "DSA/Vector.h"
+#include "Macro.h"
+#include "PriorityQueue.h"
+#include "Vector.h"
 
 /**
  * @brief 完全二叉堆
